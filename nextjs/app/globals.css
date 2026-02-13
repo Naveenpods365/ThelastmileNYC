@@ -1000,7 +1000,18 @@ p {
     display: none;
   }
 }
+/* ===== GLOBAL VISIBILITY UTILITIES ===== */
+/* Hide mobile-specific elements on desktop by default */
+.mobile-text-slider,
+.mobile-video-section,
+.linkedin-box-mobile {
+  display: none !important;
+}
 
+/* Ensure desktop elements are visible */
+.desktop-text-slider {
+  display: block;
+}
 /* Mobile (<=767) */
 @media (max-width: 767px) {
   /* Stack layout vertically */
@@ -1010,9 +1021,9 @@ p {
     justify-content: flex-start;
     padding-top: 80px; /* Space for absolute header */
     height: auto;
-    min-height: 100vh;
-    background: #000; /* Ensure dark background */
-    overflow-x: hidden;
+    min-height: auto !important; /* Allow content to dictate height */
+    background: transparent; /* Rely on body background */
+    overflow: visible !important;
   }
 
   /* Hide Desktop specific elements */
@@ -1159,12 +1170,12 @@ p {
 
   /* Video Section */
   .mobile-video-section {
-    display: flex;
+    display: flex !important; /* Force override global hide */
     justify-content: center;
     padding: 0 15px 20px 15px;
-    margin-top: -40px; /* Pull up to overlap Jim's bottom */
+    margin-top: -60px; /* Pull up to overlap Jim */
     position: relative;
-    z-index: 2;
+    z-index: 10;
   }
 
   .homevideo {
@@ -1182,8 +1193,8 @@ p {
 
   /* Text Slider (Mobile) */
   .mobile-text-slider {
-    display: block;
-    padding: 20px;
+    display: block !important; /* Force override global hide */
+    padding: 20px 15px 40px 15px;
     text-align: center;
     background: #000;
   }
