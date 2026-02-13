@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     'msapplication-TileImage': 'https://thelastmilenyc.com/wp-content/uploads/2026/02/Group-1321315420-1.png',
   },
 };
-// logijkkn
+// logijk\
 export default function RootLayout({
   children,
 }: {
