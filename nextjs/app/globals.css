@@ -298,7 +298,7 @@ p {
 .tooltip-2 {
   position: absolute;
   top: 20% !important; /* Adjusted to ear/head level */
-  left: 85%; /* Clear of the person image */
+  left: 65%; /* Clear of the person image */
   margin-left: 0;
   width: 130px; /* Smaller size */
   z-index: 999;
