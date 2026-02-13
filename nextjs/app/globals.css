@@ -1003,123 +1003,245 @@ p {
 
 /* Mobile (<=767) */
 @media (max-width: 767px) {
+  /* Stack layout vertically */
   #homecss {
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 80px; /* Space for absolute header */
+    height: auto;
+    min-height: 100vh;
+    background: #000; /* Ensure dark background */
+    overflow-x: hidden;
   }
 
+  /* Hide Desktop specific elements */
+  .desktop-text-slider,
+  .video-container,
+  .linkedin-box {
+    display: none !important;
+  }
+
+  /* Header: LinkedIn Top Left */
+  .linkedin-box-mobile {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    margin: 0;
+    z-index: 1000;
+    display: block !important; /* Force show */
+  }
+
+  .linkedin-box-mobile a {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between text and icon */
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .linkedin-box-mobile .icon-box-title {
+    font-size: 14px;
+    font-weight: 600;
+    order: 1; /* Text first */
+  }
+
+  .linkedin-icons svg {
+    width: 32px;
+    height: 32px;
+    order: 2; /* Icon second */
+  }
+
+  /* Header: Menu Top Right */
+  .headmenu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    margin: 0;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+  }
+
+  /* Menu Widget (Button) */
+  .menu-widget {
+    width: auto;
+    max-width: none;
+    position: static; /* Let it flow in flex headmenu */
+    order: 1; /* Button first (left of logo) */
+  }
+
+  .menu-toggle-btn {
+    float: none;
+    margin: 0;
+    /* Reuse desktop styles, just position */
+  }
+
+  /* Logo */
+  .logo-img {
+    width: 80px; /* Smaller logo */
+    height: auto;
+    order: 2; /* Logo second (right) */
+    display: block;
+  }
+
+  /* Main Content: Jim centered */
   .content-left {
-    margin-top: -40px;
+    width: 100%;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1; /* Below header */
   }
 
   .img-wrapper {
     margin: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .img-1 img {
-    width: 75%;
+    width: 80%; /* Globe size */
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .jim-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: -20px; /* Overlap globe slightly */
+  }
+
+  .jim-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .jim img {
-    width: 75%;
+    width: 90%; /* Jim size */
+    height: auto;
+    object-position: center top;
   }
 
-  #vdeobg {
-    padding: 10px;
-  }
-
-  .linkedin-box-mobile {
-    margin: 20px 0 -70px 0;
-  }
-
-  .linkedin-box-mobile .icon-box-title {
-    font-size: 15px;
-  }
-
-  .headmenu {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .menu-widget {
-    width: 180px;
-    max-width: 180px;
-    z-index: 100;
-  }
-
-  .logo-img {
+  /* DSP Lifestyle Tooltip (Mobile) */
+  .tooltip-2 {
+    /* Rely on JS class toggling for visibility */
     width: 100px;
-    order: -99999;
+    top: 20% !important; /* Shoulder level */
+    bottom: auto !important;
+    left: auto !important;
+    right: 5%; /* Right side */
+    transform: none !important;
+  }
+  
+  /* Virtual Tour Tooltip (Mobile) */
+  .tooltip-1 {
+    width: 140px;
+    top: -20px !important; /* Above globe */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    margin-left: 0;
+  }
+  
+  .tooltip-2 img {
+    width: 100%;
+    height: auto;
   }
 
-  .video-container {
-    display: none;
-  }
-
+  /* Video Section */
   .mobile-video-section {
     display: flex;
+    justify-content: center;
     padding: 0 15px 20px 15px;
+    margin-top: -40px; /* Pull up to overlap Jim's bottom */
+    position: relative;
+    z-index: 2;
   }
 
-  .text-slider-widget {
+  .homevideo {
     width: 100%;
-    max-width: 100%;
-    margin: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
 
-  .text-slider {
-    font-size: 1.3rem;
-    line-height: 1.5rem;
+  .homevideo video {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
-  .popup-content {
-    padding: 16px;
-    margin: 10px;
-    max-width: 95vw;
+  /* Text Slider (Mobile) */
+  .mobile-text-slider {
+    display: block;
+    padding: 20px;
+    text-align: center;
+    background: #000;
   }
 
-  .popup-video {
-    max-width: 100%;
-  }
-
-  .bottom-right-logo {
-    width: 48px;
-    height: 48px;
-    bottom: 10px;
-    right: 10px;
-  }
-
-  .bottom-right-logo img {
-    width: 44px;
-    height: 44px;
+  .mobile-text-slider .text-slider {
+    font-size: 16px;
+    line-height: 1.4;
+    justify-content: center;
   }
 }
 
 @media (max-width: 768px) {
   .dropdown-menu {
-    width: 180px !important;
-    height: 116px !important;
-    border-radius: 25px !important;
-    background: hsl(0deg 0% 35.94% / 60%) !important;
+    width: 200px !important;
+    height: auto !important; /* Allow content to flow */
+    min-height: 120px;
+    top: 50px !important; /* Below the button */
+    right: 0 !important;
+    left: auto !important;
+    border-radius: 12px !important;
+    background: #333 !important; /* Dark solid background */
+    padding: 10px !important;
+    flex-direction: column !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   }
 
   .menu-list {
-    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column !important;
+    width: 100%;
+    align-items: flex-start;
   }
 
   .menu-item {
-    flex-direction: column;
+    width: 100%;
+    margin: 5px 0;
+    text-align: left;
+    display: block;
+  }
+  
+  .menu-link {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
   }
 
   .menu-item:not(:last-child)::after {
     display: none;
   }
 
+  /* Tooltip Arrow Adjustment for Top Position */
   .tooltip-1::before {
     content: "";
     position: absolute;
-    transform: rotate(271deg) !important;
-    left: 40%;
-    top: 99%;
+    transform: rotate(90deg) !important; /* Point down */
+    left: 50%;
+    top: 100%; /* Bottom edge */
+    margin-left: -11px; /* Center */
     border-width: 11px;
     border-style: solid;
     border-color: transparent #fff transparent transparent;

@@ -199,19 +199,7 @@ export default function HomePage() {
     []
   );
 
-  // Bland AI widget
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !(window as unknown as Record<string, boolean>).blandLoaded) {
-      (window as unknown as Record<string, Record<string, string>>).blandSettings = {
-        widget_id: '07d1da03-04df-4b4d-b214-690d5f452b30',
-      };
-      const script = document.createElement('script');
-      script.src = 'https://widget.bland.ai/loader.js';
-      script.defer = true;
-      document.body.appendChild(script);
-      (window as unknown as Record<string, boolean>).blandLoaded = true;
-    }
-  }, []);
+
 
   // Scroll lock (desktop)
   useEffect(() => {
@@ -262,6 +250,7 @@ export default function HomePage() {
               onMouseLeave={() => {
                 hideTimeout1.current = setTimeout(() => setShowTooltip1(false), 400);
               }}
+              onClick={() => showTooltip(1)} // Mobile click support
             >
               <Image
                 src="/images/Group-1321314714-1.png"
@@ -283,7 +272,7 @@ export default function HomePage() {
               >
                 <div
                   className="tooltip-1-inner"
-                  onClick={() => setTourPopup(true)}
+                  onClick={(e) => { e.stopPropagation(); setTourPopup(true); }} // Prevent bubble click from re-toggling
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter') setTourPopup(true); }}
@@ -307,6 +296,7 @@ export default function HomePage() {
               onMouseLeave={() => {
                 hideTimeout2.current = setTimeout(() => setShowTooltip2(false), 400);
               }}
+              onClick={() => showTooltip(2)} // Mobile click support
             >
               {/* Jim Royce Image */}
               <div className="jim">
@@ -418,8 +408,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── Text Slider ── */}
-          <TextSlider />
+          {/* ── Text Slider (desktop) ── */}
+          <div className="desktop-text-slider">
+            <TextSlider />
+          </div>
         </div>
       </div>
 
@@ -437,6 +429,11 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ── Text Slider (mobile) ── */}
+      <div className="mobile-text-slider">
+        <TextSlider />
+      </div>
+
       {/* ═══ POPUPS ═══ */}
       {tourPopup && (
         <VideoPopup
@@ -452,9 +449,6 @@ export default function HomePage() {
           onClose={() => setDspPopup(false)}
         />
       )}
-
-      {/* Bland AI root */}
-      <div id="bland-root"></div>
     </>
   );
 }
