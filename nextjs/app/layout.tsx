@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Home - The Last Mile NYC',
@@ -10,7 +13,6 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'Home - The Last Mile NYC',
     description: 'The Last Mile NYC - Revolutionizing Last Mile Delivery',
-   
     siteName: 'The Last Mile NYC',
     images: [
       {
@@ -28,15 +30,16 @@ export const metadata: Metadata = {
     images: ['https://thelastmilenyc.com/wp-content/uploads/2025/08/home-new.png'],
   },
   icons: {
-    icon: 'https://thelastmilenyc.com/wp-content/uploads/2026/02/Group-1321315420-1.png',
-    shortcut: 'https://thelastmilenyc.com/wp-content/uploads/2026/02/Group-1321315420-1.png',
-    apple: 'https://thelastmilenyc.com/wp-content/uploads/2026/02/Group-1321315420-1.png',
+    icon: '/images/favicon.png',
+    shortcut: '/images/favicon.png',
+    apple: '/images/favicon.png',
   },
+  manifest: '/manifest.json',
   other: {
-    'msapplication-TileImage': 'https://thelastmilenyc.com/wp-content/uploads/2026/02/Group-1321315420-1.png',
+    'msapplication-TileImage': '/images/favicon.png',
   },
 };
-// logijk\
+
 export default function RootLayout({
   children,
 }: {
@@ -44,7 +47,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-US">
-      <body suppressHydrationWarning={true}>{children}</body>
+      <head>
+        <link rel="preload" href="/images/home-new.png" as="image" />
+      </head>
+      <body className={inter.className} suppressHydrationWarning={true}>{children}</body>
     </html>
   );
 }
