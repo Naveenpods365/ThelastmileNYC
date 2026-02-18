@@ -1,11 +1,51 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LinkedInIcon, TourIcon, MenuOpenIcon, MenuCloseIcon } from '@/components/Icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LinkedInIcon, TourIcon, MenuCloseIcon, MenuOpenIcon } from '@/components/Icons';
 
-/* ───────── TEXT SLIDER ───────── */
+/* ───────── ANIMATION VARIANTS ───────── */
+const tooltipVariants = {
+  hidden: { opacity: 0, scale: 0.8, x: -20, display: 'none' },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    x: 0, 
+    display: 'block',
+    transition: { type: 'spring' as const, stiffness: 300, damping: 20 } 
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.8, 
+    x: -20, 
+    transition: { duration: 0.2 },
+    transitionEnd: { display: 'none' }
+  }
+};
+
+const menuVariants = {
+  closed: { 
+    opacity: 0, 
+    x: 20, 
+    maxWidth: 0,
+    pointerEvents: 'none' as const,
+    transition: { duration: 0.3 }
+  },
+  open: { 
+    opacity: 1, 
+    x: 0, 
+    maxWidth: 400,
+    pointerEvents: 'auto' as const, 
+    transition: { type: 'spring' as const, stiffness: 300, damping: 30, staggerChildren: 0.05, delayChildren: 0.1 } 
+  }
+};
+
+const menuItemVariants = {
+  closed: { opacity: 0, x: 20 },
+  open: { opacity: 1, x: 0 }
+};
 
 /* ───────── TEXT SLIDER ───────── */
 const SLIDER_TEXTS = [
@@ -28,12 +68,20 @@ function TextSlider() {
   return (
     <div className="text-slider-section">
       <div className="text-slider-widget">
-        <div className="text-slider">
-          {SLIDER_TEXTS.map((text, i) => (
-            <div key={i} className={`slide ${i === activeIndex ? 'active' : ''}`}>
-              {text}
-            </div>
-          ))}
+        <div className="text-slider" style={{ position: 'relative', height: '6rem', minHeight: '3rem', overflow: 'hidden' }}>
+          <AnimatePresence>
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="slide active"
+              style={{ position: 'absolute', width: '100%' }}
+            >
+              {SLIDER_TEXTS[activeIndex]}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>
@@ -57,8 +105,22 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
   }, [onClose]);
 
   return (
-    <div className="popup-overlay" onClick={onClose}>
-      <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="popup-overlay"
+      onClick={onClose}
+      style={{ zIndex: 10000 }} // Ensure it's on top
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.9, y: 20, opacity: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="popup-content"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="popup-close" onClick={onClose} aria-label="Close popup">✕</button>
         <h2 className="popup-title">{title}</h2>
         <video
@@ -70,63 +132,24 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
           playsInline
           preload="metadata"
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
 /* ───────── MAIN PAGE ───────── */
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [menuClosing, setMenuClosing] = useState(false);
   const [tourPopup, setTourPopup] = useState(false);
   const [dspPopup, setDspPopup] = useState(false);
 
-  // Tooltip visibility
-  const [showTooltip1, setShowTooltip1] = useState(false);
-  const [showTooltip2, setShowTooltip2] = useState(false);
+  // Tooltip state
+  const [activeTooltip, setActiveTooltip] = useState<1 | 2 | null>(null);
+  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Timeout refs
-  const hideTimeout1 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hideTimeout2 = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const tooltip1Class = showTooltip1 ? 'tooltip-show' : 'tooltip-hide';
-  const tooltip2Class = showTooltip2 ? 'tooltip-show' : 'tooltip-hide';
-
-  const toggleMenu = useCallback(() => {
-    if (menuOpen) {
-      setMenuClosing(true);
-      setTimeout(() => {
-        setMenuOpen(false);
-        setMenuClosing(false);
-      }, 520);
-    } else {
-      setMenuOpen(true);
-    }
-  }, [menuOpen]);
-
-  // Show tooltip helper — close other tooltip first
-  const showTooltip = useCallback(
-    (which: 1 | 2) => {
-      if (which === 1) {
-        if (hideTimeout1.current) clearTimeout(hideTimeout1.current);
-        setShowTooltip2(false);
-        setShowTooltip1(true);
-      } else {
-        if (hideTimeout2.current) clearTimeout(hideTimeout2.current);
-        setShowTooltip1(false);
-        setShowTooltip2(true);
-      }
-    },
-    []
-  );
-
-
-
-  // Scroll lock (desktop)
+  // Layout scroll lock
   useEffect(() => {
     function handleScrollLock() {
-      // Defer reading layout properties to avoid thrashing during initial render
       const isDesktop = window.innerWidth >= 1024;
       const contentHeight = document.body.scrollHeight;
       const windowHeight = window.innerHeight;
@@ -136,32 +159,49 @@ export default function HomePage() {
         document.body.style.overflow = 'auto';
       }
     }
-
-    // Delay initial check to reduce TBT
-    const timer = setTimeout(() => {
-        handleScrollLock();
-    }, 100);
-
+    const timer = setTimeout(handleScrollLock, 100);
     window.addEventListener('resize', handleScrollLock);
     return () => {
-        clearTimeout(timer);
-        window.removeEventListener('resize', handleScrollLock);
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleScrollLock);
     };
   }, []);
+
+  const handleTooltipEnter = (id: 1 | 2) => {
+    if (hideTimeout.current) clearTimeout(hideTimeout.current);
+    setActiveTooltip(id);
+  };
+
+  const handleTooltipLeave = () => {
+    hideTimeout.current = setTimeout(() => setActiveTooltip(null), 400);
+  };
+
+  // Prevent multiple popups
+  const openTourPopup = () => setTourPopup(true);
+  const openDspPopup = () => setDspPopup(true);
 
   return (
     <>
       {/* ═══ MAIN CONTAINER ═══ */}
-      <div id="homecss">
-
+      <motion.div
+        id="homecss"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
         {/* ═══ LEFT COLUMN (content-left) ═══ */}
         <div className="content-left">
 
           {/* ── img-wrapper: LinkedIn box + Tour tooltip + Globe image ── */}
           <div className="img-wrapper">
 
-            {/* LinkedIn "Connect with Us" (desktop only — hidden on tablet/mobile via CSS) */}
-            <div className="linkedin-box">
+            {/* LinkedIn "Connect with Us" (desktop only) */}
+            <motion.div
+              className="linkedin-box"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
               <a
                 href="https://www.linkedin.com/in/jim-royce/"
                 target="_blank"
@@ -171,51 +211,60 @@ export default function HomePage() {
                 <span className="icon-box-title">Connect with Us</span>
                 <LinkedInIcon />
               </a>
-            </div>
+            </motion.div>
 
             {/* Globe image (img-1) & Tooltip */}
             <div
               className="img-1"
-              style={{ position: 'relative' }} /* Ensure relative positioning for tooltip */
-              onMouseEnter={() => showTooltip(1)}
-              onMouseLeave={() => {
-                hideTimeout1.current = setTimeout(() => setShowTooltip1(false), 400);
-              }}
-              onClick={() => showTooltip(1)} // Mobile click support
+              style={{ position: 'relative' }}
+              onMouseEnter={() => handleTooltipEnter(1)}
+              onMouseLeave={handleTooltipLeave}
+              onClick={() => handleTooltipEnter(1)}
             >
-              <Image
-                src="/images/Group-1321314714-1.png"
-                alt="LastMile Globe"
-                width={378}
-                height={342}
-                priority
-              />
-
-              {/* tooltip-1: Take Virtual Tour */}
-              <div
-                className={`tooltip-1 ${tooltip1Class}`}
-                onMouseEnter={() => {
-                  if (hideTimeout1.current) clearTimeout(hideTimeout1.current);
-                }}
-                onMouseLeave={() => {
-                  hideTimeout1.current = setTimeout(() => setShowTooltip1(false), 400);
-                }}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.4, type: 'spring' }}
               >
-                <div
-                  className="tooltip-1-inner"
-                  onClick={(e) => { e.stopPropagation(); setTourPopup(true); }} // Prevent bubble click from re-toggling
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter') setTourPopup(true); }}
-                >
-                  <TourIcon />
-                  <span className="icon-box-title">
-                    <a href="#" onClick={(e) => { e.preventDefault(); setTourPopup(true); }}>
-                      Take Virtual <br />Tour
-                    </a>
-                  </span>
-                </div>
-              </div>
+                <Image
+                  src="/images/Group-1321314714-1.png"
+                  alt="LastMile Globe"
+                  width={378}
+                  height={342}
+                  priority
+                />
+              </motion.div>
+
+              <AnimatePresence>
+                {activeTooltip === 1 && (
+                  <motion.div
+                    key="tooltip1"
+                    className="tooltip-1"
+                    variants={tooltipVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    style={{ zIndex: 999 }}
+                    onMouseEnter={() => { if (hideTimeout.current) clearTimeout(hideTimeout.current); }}
+                    onMouseLeave={handleTooltipLeave}
+                  >
+                    <div
+                      className="tooltip-1-inner"
+                      onClick={(e) => { e.stopPropagation(); openTourPopup(); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter') openTourPopup(); }}
+                    >
+                      <TourIcon />
+                      <span className="icon-box-title">
+                        <a href="#" onClick={(e) => { e.preventDefault(); openTourPopup(); }}>
+                          Take Virtual <br />Tour
+                        </a>
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -223,14 +272,17 @@ export default function HomePage() {
           <div className="jim-container">
             <div
               className="jim-wrapper"
-              onMouseEnter={() => showTooltip(2)}
-              onMouseLeave={() => {
-                hideTimeout2.current = setTimeout(() => setShowTooltip2(false), 400);
-              }}
-              onClick={() => showTooltip(2)} // Mobile click support
+              onMouseEnter={() => handleTooltipEnter(2)}
+              onMouseLeave={handleTooltipLeave}
+              onClick={() => handleTooltipEnter(2)}
             >
               {/* Jim Royce Image */}
-              <div className="jim">
+              <motion.div
+                className="jim"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6, type: 'spring' }}
+              >
                 <Image
                   src="/images/Group-1321315409-e1756292294312.png"
                   alt="Jim Royce"
@@ -239,27 +291,33 @@ export default function HomePage() {
                   priority
                   sizes="(max-width: 768px) 100vw, 560px"
                 />
-              </div>
+              </motion.div>
 
               {/* tooltip-2: DSP Lifestyle */}
-              <div
-                className={`tooltip-2 ${tooltip2Class}`}
-                onMouseEnter={() => {
-                  if (hideTimeout2.current) clearTimeout(hideTimeout2.current);
-                }}
-                onMouseLeave={() => {
-                  hideTimeout2.current = setTimeout(() => setShowTooltip2(false), 200);
-                }}
-              >
-                <button className="dsp-btn" onClick={() => setDspPopup(true)} aria-label="The DSP Lifestyle">
-                  <Image
-                    src="/images/Group-1321315414-e1756371262949.png"
-                    alt="The DSP Lifestyle"
-                    width={162}
-                    height={141}
-                  />
-                </button>
-              </div>
+              <AnimatePresence>
+                {activeTooltip === 2 && (
+                  <motion.div
+                    key="tooltip2"
+                    className="tooltip-2"
+                    variants={tooltipVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    style={{ zIndex: 999 }}
+                    onMouseEnter={() => { if (hideTimeout.current) clearTimeout(hideTimeout.current); }}
+                    onMouseLeave={handleTooltipLeave}
+                  >
+                    <button className="dsp-btn" onClick={openDspPopup} aria-label="The DSP Lifestyle">
+                      <Image
+                        src="/images/Group-1321315414-e1756371262949.png"
+                        alt="The DSP Lifestyle"
+                        width={162}
+                        height={141}
+                      />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -267,7 +325,7 @@ export default function HomePage() {
         {/* ═══ RIGHT COLUMN (#vdeobg) ═══ */}
         <div id="vdeobg">
 
-          {/* LinkedIn box (mobile only — hidden on desktop via CSS) */}
+          {/* LinkedIn box (mobile only) */}
           <div className="linkedin-box-mobile">
             <a
               href="https://www.linkedin.com/in/jim-royce/"
@@ -284,51 +342,117 @@ export default function HomePage() {
           <div className="headmenu">
 
             {/* Mega menu widget */}
-            <div className="menu-widget" id="pushmenu">
-              <button
-                className={`menu-toggle-btn ${menuOpen ? 'is-open' : ''}`}
-                onClick={toggleMenu}
-                aria-haspopup="true"
-                aria-expanded={menuOpen}
-                aria-label="Menu Toggle"
+            <div className="menu-widget" id="pushmenu" style={{ position: 'relative', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '50px' }}>
+              <motion.div
+                className="menu-container"
+                layout
+                initial={false}
+                animate={{
+                  width: menuOpen ? 'auto' : 50,
+                  backgroundColor: menuOpen ? 'rgba(51, 51, 51, 0.95)' : 'rgba(0,0,0,0)',
+                  borderRadius: 50,
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  overflow: 'hidden',
+                  height: '50px',
+                  boxShadow: menuOpen ? '0 4px 15px rgba(0, 0, 0, 0.3)' : 'none',
+                  position: 'relative', // Ensure stacking context
+                  zIndex: 20
+                }}
+                transition={{ type: 'spring', stiffness: 180, damping: 30, mass: 1 }}
               >
-                <span className="icon-open"><MenuOpenIcon /></span>
-                <span className="icon-close"><MenuCloseIcon /></span>
-              </button>
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {!menuOpen ? (
+                    <motion.button
+                      layout="position"
+                      key="open-btn"
+                      className="menu-toggle-btn open"
+                      onClick={() => setMenuOpen(true)}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.3, ease: "anticipate" }}
+                      aria-label="Open Menu"
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        padding: 0, 
+                        width: '50px', 
+                        height: '50px', 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        position: 'absolute', // Absolute to overlap nicely during transition
+                        right: 0
+                      }}
+                    >
+                      <MenuOpenIcon />
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      layout="position"
+                      key="menu-content"
+                      className="menu-links-wrapper"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -5, transition: { duration: 0.15 } }}
+                      transition={{ duration: 0.3, delay: 0.05, ease: "easeOut" }}
+                      style={{ display: 'flex', alignItems: 'center', paddingRight: '6px', paddingLeft: '24px', gap: '15px', whiteSpace: 'nowrap' }}
+                    >
+                       <div className="menu-links-container" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                          <Link href="/experience" className="capsule-link">Experience</Link>
+                          <span className="capsule-divider">|</span>
+                          <Link href="/outlook" className="capsule-link">Expertise</Link>
+                          <span className="capsule-divider">|</span>
+                          <Link href="/execution" className="capsule-link">Execution</Link>
+                       </div>
 
-              <nav
-                className={`dropdown-menu ${menuOpen ? 'is-open' : ''} ${menuClosing ? 'is-closing' : ''}`}
-                aria-label="Menu"
-              >
-                <ul className="menu-list">
-                  <li className="menu-item">
-                    <Link href="/experience" className="menu-link">Experience</Link>
-                  </li>
-                  <li className="menu-item">
-                    <Link href="/outlook" className="menu-link">Expertise</Link>
-                  </li>
-                  <li className="menu-item">
-                    <Link href="/execution" className="menu-link">Execution</Link>
-                  </li>
-                </ul>
-              </nav>
+                      <button 
+                        className="capsule-close-btn"
+                        onClick={() => setMenuOpen(false)}
+                        aria-label="Close Menu"
+                        style={{ margin: 0 }} // Override any external margin
+                      >
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M13 1L1 13M1 1L13 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </div>
 
             {/* Logo */}
             <Link href="/">
-              <Image
-                src="/images/logo-2.png"
-                alt="LastMile NYC"
-                width={174}
-                height={114}
-                className="logo-img"
-                priority
-              />
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.8, type: 'spring' }}
+              >
+                <Image
+                  src="/images/logo-2.png"
+                  alt="LastMile NYC"
+                  width={174}
+                  height={114}
+                  className="logo-img"
+                  priority
+                />
+              </motion.div>
             </Link>
           </div>
 
-          {/* ── Video (desktop — hidden on mobile via CSS) ── */}
-          <div className="video-container">
+          {/* ── Video (desktop) ── */}
+          <motion.div
+            className="video-container"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          >
             <div className="homevideo">
               <video
                 src="/images/NEW-2.webm"
@@ -339,16 +463,21 @@ export default function HomePage() {
                 controlsList="nodownload"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* ── Text Slider (desktop) ── */}
-          <div className="desktop-text-slider">
+          <motion.div
+            className="desktop-text-slider"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
             <TextSlider />
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ═══ MOBILE VIDEO SECTION (shown only on mobile via CSS) ═══ */}
+      {/* ═══ MOBILE VIDEO SECTION ═══ */}
       <div className="mobile-video-section">
         <div className="homevideo">
           <video
@@ -368,20 +497,24 @@ export default function HomePage() {
       </div>
 
       {/* ═══ POPUPS ═══ */}
-      {tourPopup && (
-        <VideoPopup
-          title="Website Tour"
-          videoSrc="https://clientblob1.blob.core.windows.net/websitecontent/Website_Tour_High_Res_Mp4.mp4"
-          onClose={() => setTourPopup(false)}
-        />
-      )}
-      {dspPopup && (
-        <VideoPopup
-          title="The DSP Lifestyle"
-          videoSrc="https://clientblob1.blob.core.windows.net/websitecontent/Fitness_Video_Full_2.mp4"
-          onClose={() => setDspPopup(false)}
-        />
-      )}
+      <AnimatePresence>
+        {tourPopup && (
+          <VideoPopup
+            key="tour-popup"
+            title="Website Tour"
+            videoSrc="https://clientblob1.blob.core.windows.net/websitecontent/Website_Tour_High_Res_Mp4.mp4"
+            onClose={() => setTourPopup(false)}
+          />
+        )}
+        {dspPopup && (
+          <VideoPopup
+            key="dsp-popup"
+            title="The DSP Lifestyle"
+            videoSrc="https://clientblob1.blob.core.windows.net/websitecontent/Fitness_Video_Full_2.mp4"
+            onClose={() => setDspPopup(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }
