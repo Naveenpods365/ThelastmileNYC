@@ -289,7 +289,7 @@ export default function ExperiencePage() {
             id: "communication",
             label: "Communication",
             icon: "communication",
-            left: "77.6%",
+            left: "67.6%",
             top: "45.0%",
             mobileLeft: "67.6%",
             mobileTop: "45.0%",
@@ -306,7 +306,7 @@ export default function ExperiencePage() {
     const pinTooltipYOffset =
         Math.round(pinHeight / 2) + (isMobileMap ? 40 : 46);
     const badgeSize = isMobileMap ? 110 : BADGE_SIZE_PX;
-    const badgeTooltipLeft = badgeSize + (isMobileMap ? 12 : 18);
+    const badgeTooltipLeft = badgeSize + (isMobileMap ? 16 : 28);
     const badgeTooltipTop = Math.round(badgeSize / 2) + (isMobileMap ? 12 : 0);
 
     const activePopupConfig = activePopup
