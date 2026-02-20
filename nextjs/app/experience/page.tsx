@@ -684,7 +684,11 @@ export default function ExperiencePage() {
                                                         style={{
                                                             ...tooltipBaseStyle,
                                                             fontSize: 26,
-                                                            zIndex: 20,
+                                                            zIndex:
+                                                                pin.id ===
+                                                                "innovation"
+                                                                    ? 60
+                                                                    : 20,
                                                         }}
                                                     >
                                                         <span

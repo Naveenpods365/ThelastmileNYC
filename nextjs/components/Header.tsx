@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, correctBorderRadius, motion } from "framer-motion";
 import { LinkedInIcon, MenuOpenIcon } from "@/components/Icons";
 
 export default function Header() {
@@ -23,7 +23,7 @@ export default function Header() {
                     <span className="header__linkedin-text">
                         Connect With Us
                     </span>
-                    <LinkedInIcon />
+                    <LinkedInIcon  />
                 </a>
 
                 <div className="header__mobile-right">
@@ -406,6 +406,8 @@ export default function Header() {
                 .header__linkedin :global(svg) {
                     width: 32px;
                     height: 32px;
+                    border-radius: 8px !important;
+                    overflow: hidden;
                 }
 
                 .header__mobile-right {
