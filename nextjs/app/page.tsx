@@ -128,7 +128,6 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
           src={videoSrc}
           controls
           autoPlay
-          muted
           playsInline
           preload="metadata"
         />

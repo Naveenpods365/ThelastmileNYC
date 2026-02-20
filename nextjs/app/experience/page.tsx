@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { LinkedInIcon, MenuOpenIcon } from "@/components/Icons";
+import Header from "@/components/Header";
 
 type PinId =
     | "about"
@@ -15,9 +14,11 @@ type PinId =
     | "communication";
 
 const BADGE_SIZE_PX = 130;
-const PIN_W_PX = 170;
-const PIN_H_PX = 222;
-const PIN_TOOLTIP_Y_OFFSET_PX = Math.round(PIN_H_PX / 2) + 46;
+const PIN_W_PX_DESKTOP = 170;
+const PIN_H_PX_DESKTOP = 222;
+const PIN_W_PX_MOBILE = 120;
+const PIN_H_PX_MOBILE = 156;
+const MOBILE_MAP_BREAKPOINT_PX = 900;
 
 const tooltipVariants = {
     hidden: { opacity: 0, scale: 0.95, y: 4, display: "none" as const },
@@ -158,7 +159,6 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
                     src={videoSrc}
                     controls
                     autoPlay
-                    muted
                     playsInline
                     preload="metadata"
                 />
@@ -168,10 +168,9 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
 }
 
 export default function ExperiencePage() {
-    const [menuOpen, setMenuOpen] = useState(false);
-
     const [activeTooltip, setActiveTooltip] = useState<PinId | null>(null);
     const [activePopup, setActivePopup] = useState<PinId | null>(null);
+    const [isMobileMap, setIsMobileMap] = useState(false);
     const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
@@ -194,6 +193,21 @@ export default function ExperiencePage() {
         };
     }, []);
 
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const mediaQuery = window.matchMedia(
+            `(max-width: ${MOBILE_MAP_BREAKPOINT_PX}px)`,
+        );
+        const updateMatch = () => setIsMobileMap(mediaQuery.matches);
+        updateMatch();
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener("change", updateMatch);
+            return () => mediaQuery.removeEventListener("change", updateMatch);
+        }
+        mediaQuery.addListener(updateMatch);
+        return () => mediaQuery.removeListener(updateMatch);
+    }, []);
+
     const showTooltip = (id: PinId) => {
         if (hideTimeout.current) clearTimeout(hideTimeout.current);
         setActiveTooltip(id);
@@ -208,7 +222,7 @@ export default function ExperiencePage() {
         label: "About Jim Royce",
         icon: "person" as const,
         videoSrc:
-            "https://clientblob1.blob.core.windows.net/websitecontent/About_Jim.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=Kr%2BQvNOXzxx%2BWIfiyRIhQ%2FKM7uqTUZ4Glh2DlCM3YtE%3D",
+            "https://clientblob1.blob.core.windows.net/websitecontent/About_Jim.mp4",
     };
 
     const PINS: Array<{
@@ -223,8 +237,8 @@ export default function ExperiencePage() {
             | "innovation";
         left: string;
         top: string;
-        tooltipLeft: string;
-        tooltipTop: string;
+        mobileLeft: string;
+        mobileTop: string;
         videoSrc: string;
     }> = [
         {
@@ -233,10 +247,10 @@ export default function ExperiencePage() {
             icon: "people",
             left: "8.3%",
             top: "66.5%",
-            tooltipLeft: "8.3%",
-            tooltipTop: "56.5%",
+            mobileLeft: "18.3%",
+            mobileTop: "66.5%",
             videoSrc:
-                "https://clientblob1.blob.core.windows.net/websitecontent/People.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=OH2GwYCj2mauQdVIE5IeWv2v%2FiXFjiRTLA%2F95pnNR5s%3D",
+                "https://clientblob1.blob.core.windows.net/websitecontent/People.mp4",
         },
         {
             id: "technology",
@@ -244,10 +258,10 @@ export default function ExperiencePage() {
             icon: "technology",
             left: "30.5%",
             top: "54.5%",
-            tooltipLeft: "30.5%",
-            tooltipTop: "52.5%",
+            mobileLeft: "20.5%",
+            mobileTop: "40.5%",
             videoSrc:
-                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Technology.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=66IvzyDPAqG%2FGzPVG%2B5bjrw3ofeuXjESS3XU%2FraMiNA%3D",
+                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Technology.mp4",
         },
         {
             id: "scale",
@@ -255,10 +269,10 @@ export default function ExperiencePage() {
             icon: "scale",
             left: "47.8%",
             top: "37.5%",
-            tooltipLeft: "47.8%",
-            tooltipTop: "45.5%",
+            mobileLeft: "47.8%",
+            mobileTop: "37.5%",
             videoSrc:
-                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Scale.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=vRBLbCKBcaZ%2BXaC2gVzc2IPCDv5nrCxrE1XJhXZMk6M%3D",
+                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Scale.mp4",
         },
         {
             id: "innovation",
@@ -266,23 +280,34 @@ export default function ExperiencePage() {
             icon: "innovation",
             left: "52.0%",
             top: "77.0%",
-            tooltipLeft: "56.0%",
-            tooltipTop: "68.0%",
+            mobileLeft: "56.0%",
+            mobileTop: "57.0%",
             videoSrc:
-                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Innovation.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=NMvH0MCc0hDSpiUymWNFvPSEb5zm3KLt%2Bwk2KASaXAE%3D",
+                "https://clientblob1.blob.core.windows.net/websitecontent/Experience_Video_Innovation.mp4",
         },
         {
             id: "communication",
             label: "Communication",
             icon: "communication",
-            left: "67.6%",
+            left: "77.6%",
             top: "45.0%",
-            tooltipLeft: "72.6%",
-            tooltipTop: "52.0%",
+            mobileLeft: "67.6%",
+            mobileTop: "45.0%",
             videoSrc:
-                "https://clientblob1.blob.core.windows.net/websitecontent/Communication.mp4?sv=2025-05-05&se=2026-02-09T12%3A46%3A05Z&sr=b&sp=r&sig=tt0v%2FeNslEbit%2BA5HFf%2F75IBtCtG9QJF%2FhsYzi12jnQ%3D",
+                "https://clientblob1.blob.core.windows.net/websitecontent/Communication.mp4",
         },
     ];
+
+    const mapImageSrc = isMobileMap
+        ? "/images/Frame-627846.png"
+        : "/images/Frame-1618873644-1.png";
+    const pinWidth = isMobileMap ? PIN_W_PX_MOBILE : PIN_W_PX_DESKTOP;
+    const pinHeight = isMobileMap ? PIN_H_PX_MOBILE : PIN_H_PX_DESKTOP;
+    const pinTooltipYOffset =
+        Math.round(pinHeight / 2) + (isMobileMap ? 40 : 46);
+    const badgeSize = isMobileMap ? 110 : BADGE_SIZE_PX;
+    const badgeTooltipLeft = badgeSize + (isMobileMap ? 12 : 18);
+    const badgeTooltipTop = Math.round(badgeSize / 2) + (isMobileMap ? 12 : 0);
 
     const activePopupConfig = activePopup
         ? activePopup === ABOUT_JIM.id
@@ -386,19 +411,12 @@ export default function ExperiencePage() {
     };
 
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                backgroundColor: "#000",
-                position: "relative",
-                overflow: "hidden",
-            }}
-        >
+        <div>
             <div
                 style={{
                     position: "absolute",
                     inset: 0,
-                    backgroundImage: "url(/images/home-new.png)",
+                    backgroundImage: "url(/images/home-new-1-1.png)",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     opacity: 0.35,
@@ -418,232 +436,7 @@ export default function ExperiencePage() {
                     gap: 18,
                 }}
             >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        gap: 20,
-                    }}
-                >
-                    <div className="linkedin-box" style={{ marginTop: 19 }}>
-                        <a
-                            href="https://www.linkedin.com/in/jim-royce/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="Connect with Us"
-                        >
-                            <span className="icon-box-title">
-                                Connect with Us
-                            </span>
-                            <LinkedInIcon />
-                        </a>
-                    </div>
-
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 18,
-                        }}
-                    >
-                        <div className="headmenu" style={{ margin: 0 }}>
-                            <div
-                                className="menu-widget"
-                                id="pushmenu"
-                                style={{
-                                    position: "relative",
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                    height: "50px",
-                                }}
-                            >
-                                <motion.div
-                                    className="menu-container"
-                                    layout
-                                    initial={false}
-                                    animate={{
-                                        width: menuOpen ? "auto" : 50,
-                                        backgroundColor: menuOpen
-                                            ? "rgba(51, 51, 51, 0.95)"
-                                            : "rgba(0,0,0,0)",
-                                        borderRadius: 50,
-                                    }}
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "flex-end",
-                                        overflow: "hidden",
-                                        height: "50px",
-                                        boxShadow: menuOpen
-                                            ? "0 4px 15px rgba(0, 0, 0, 0.3)"
-                                            : "none",
-                                        position: "relative",
-                                        zIndex: 20,
-                                    }}
-                                    transition={{
-                                        type: "spring",
-                                        stiffness: 180,
-                                        damping: 30,
-                                        mass: 1,
-                                    }}
-                                >
-                                    <AnimatePresence
-                                        mode="popLayout"
-                                        initial={false}
-                                    >
-                                        {!menuOpen ? (
-                                            <motion.button
-                                                layout="position"
-                                                key="open-btn"
-                                                className="menu-toggle-btn open"
-                                                onClick={() =>
-                                                    setMenuOpen(true)
-                                                }
-                                                initial={{
-                                                    opacity: 0,
-                                                    scale: 0.5,
-                                                }}
-                                                animate={{
-                                                    opacity: 1,
-                                                    scale: 1,
-                                                }}
-                                                exit={{
-                                                    opacity: 0,
-                                                    scale: 0.5,
-                                                }}
-                                                transition={{
-                                                    duration: 0.3,
-                                                    ease: "anticipate",
-                                                }}
-                                                aria-label="Open Menu"
-                                                style={{
-                                                    background: "none",
-                                                    border: "none",
-                                                    cursor: "pointer",
-                                                    padding: 0,
-                                                    width: "50px",
-                                                    height: "50px",
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    position: "absolute",
-                                                    right: 0,
-                                                }}
-                                            >
-                                                <MenuOpenIcon />
-                                            </motion.button>
-                                        ) : (
-                                            <motion.div
-                                                layout="position"
-                                                key="menu-content"
-                                                className="menu-links-wrapper"
-                                                initial={{ opacity: 0, x: -10 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{
-                                                    opacity: 0,
-                                                    x: -5,
-                                                    transition: {
-                                                        duration: 0.15,
-                                                    },
-                                                }}
-                                                transition={{
-                                                    duration: 0.3,
-                                                    delay: 0.05,
-                                                    ease: "easeOut",
-                                                }}
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    paddingRight: "6px",
-                                                    paddingLeft: "24px",
-                                                    gap: "15px",
-                                                    whiteSpace: "nowrap",
-                                                }}
-                                            >
-                                                <div
-                                                    className="menu-links-container"
-                                                    style={{
-                                                        display: "flex",
-                                                        gap: "10px",
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Link
-                                                        href="/experience"
-                                                        className="capsule-link"
-                                                    >
-                                                        Experience
-                                                    </Link>
-                                                    <span className="capsule-divider">
-                                                        |
-                                                    </span>
-                                                    <Link
-                                                        href="/outlook"
-                                                        className="capsule-link"
-                                                    >
-                                                        Expertise
-                                                    </Link>
-                                                    <span className="capsule-divider">
-                                                        |
-                                                    </span>
-                                                    <Link
-                                                        href="/execution"
-                                                        className="capsule-link"
-                                                    >
-                                                        Execution
-                                                    </Link>
-                                                </div>
-
-                                                <button
-                                                    className="capsule-close-btn"
-                                                    onClick={() =>
-                                                        setMenuOpen(false)
-                                                    }
-                                                    aria-label="Close Menu"
-                                                    style={{ margin: 0 }}
-                                                >
-                                                    <svg
-                                                        width="12"
-                                                        height="12"
-                                                        viewBox="0 0 14 14"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M13 1L1 13M1 1L13 13"
-                                                            stroke="white"
-                                                            strokeWidth="2"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-                            </div>
-
-                            <Link href="/">
-                                <motion.div
-                                    initial={{ scale: 1, opacity: 1 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                >
-                                    <Image
-                                        src="/images/logo-2.png"
-                                        alt="LastMile NYC"
-                                        width={174}
-                                        height={114}
-                                        className="logo-img"
-                                        priority
-                                    />
-                                </motion.div>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+                <Header />
 
                 <div
                     style={{
@@ -665,13 +458,16 @@ export default function ExperiencePage() {
                         }}
                     >
                         <Image
-                            src="/images/Frame-1618873644-1.png"
+                            src={mapImageSrc}
                             alt="Experience Map"
                             fill
                             priority
                             sizes="100vw"
                             style={{
                                 objectFit: "cover",
+                                objectPosition: isMobileMap
+                                    ? "center top"
+                                    : "center",
                                 pointerEvents: "none",
                             }}
                         />
@@ -681,8 +477,8 @@ export default function ExperiencePage() {
                                 position: "absolute",
                                 left: "20px",
                                 top: "20px",
-                                width: `${BADGE_SIZE_PX}px`,
-                                height: `${BADGE_SIZE_PX}px`,
+                                width: `${badgeSize}px`,
+                                height: `${badgeSize}px`,
                                 zIndex: 5,
                                 pointerEvents: "auto",
                             }}
@@ -709,7 +505,7 @@ export default function ExperiencePage() {
                                     src="/images/Group-1321315370-1.svg"
                                     alt="25 years badge"
                                     fill
-                                    sizes={`${BADGE_SIZE_PX}px`}
+                                    sizes={`${badgeSize}px`}
                                     style={{ objectFit: "contain" }}
                                 />
                             </button>
@@ -717,8 +513,8 @@ export default function ExperiencePage() {
                             <div
                                 style={{
                                     position: "absolute",
-                                    left: `${BADGE_SIZE_PX + 18}px`,
-                                    top: `${Math.round(BADGE_SIZE_PX / 2)}px`,
+                                    left: `${badgeTooltipLeft}px`,
+                                    top: `${badgeTooltipTop}px`,
                                     transform: "translateY(-50%)",
                                     pointerEvents: "auto",
                                 }}
@@ -754,6 +550,7 @@ export default function ExperiencePage() {
                                             style={{
                                                 ...tooltipBaseStyle,
                                                 fontSize: 22,
+                                                zIndex: 20,
                                             }}
                                         >
                                             <span style={tooltipContentStyle}>
@@ -786,124 +583,145 @@ export default function ExperiencePage() {
                                 pointerEvents: "none",
                             }}
                         >
-                            {PINS.map((pin) => (
-                                <div
-                                    key={pin.id}
-                                    style={{
-                                        position: "absolute",
-                                        inset: 0,
-                                        pointerEvents: "none",
-                                    }}
-                                >
-                                    <button
-                                        type="button"
-                                        aria-label={pin.label}
-                                        onMouseEnter={() => showTooltip(pin.id)}
-                                        onMouseLeave={scheduleHideTooltip}
-                                        onFocus={() => showTooltip(pin.id)}
-                                        onBlur={scheduleHideTooltip}
-                                        onClick={() => showTooltip(pin.id)}
-                                        style={{
-                                            position: "absolute",
-                                            left: pin.left,
-                                            top: pin.top,
-                                            width: `${PIN_W_PX}px`,
-                                            height: `${PIN_H_PX}px`,
-                                            transform: "translate(-50%, -50%)",
-                                            background: "transparent",
-                                            border: "none",
-                                            padding: 0,
-                                            cursor: "pointer",
-                                            pointerEvents: "auto",
-                                        }}
-                                    >
-                                        <Image
-                                            src="/images/Soft-Brown-Modern-Rip-Instagram-Post-72-1-1.svg"
-                                            alt="Map pin"
-                                            fill
-                                            sizes={`${PIN_W_PX}px`}
-                                            style={{ objectFit: "contain" }}
-                                        />
-                                    </button>
+                            {PINS.map((pin) => {
+                                const pinLeft = isMobileMap
+                                    ? pin.mobileLeft
+                                    : pin.left;
+                                const pinTop = isMobileMap
+                                    ? pin.mobileTop
+                                    : pin.top;
 
+                                return (
                                     <div
+                                        key={pin.id}
                                         style={{
                                             position: "absolute",
-                                            left: pin.left,
-                                            top: `calc(${pin.top} - ${PIN_TOOLTIP_Y_OFFSET_PX}px)`,
-                                            transform: "translate(-50%, 0)",
-                                            pointerEvents: "auto",
+                                            inset: 0,
+                                            pointerEvents: "none",
                                         }}
                                     >
-                                        <AnimatePresence>
-                                            {activeTooltip === pin.id && (
-                                                <motion.button
-                                                    key={`${pin.id}-tooltip`}
-                                                    type="button"
-                                                    variants={tooltipVariants}
-                                                    initial="hidden"
-                                                    animate="visible"
-                                                    exit="exit"
-                                                    onMouseEnter={() => {
-                                                        if (hideTimeout.current)
-                                                            clearTimeout(
-                                                                hideTimeout.current,
-                                                            );
-                                                    }}
-                                                    onMouseLeave={
-                                                        scheduleHideTooltip
-                                                    }
-                                                    onFocus={() => {
-                                                        if (hideTimeout.current)
-                                                            clearTimeout(
-                                                                hideTimeout.current,
-                                                            );
-                                                    }}
-                                                    onBlur={scheduleHideTooltip}
-                                                    onClick={() =>
-                                                        openPopupFor(pin.id)
-                                                    }
-                                                    data-direction="down"
-                                                    className="experience-tooltip"
-                                                    style={{
-                                                        ...tooltipBaseStyle,
-                                                        fontSize: 26,
-                                                    }}
-                                                >
-                                                    <span
-                                                        style={
-                                                            tooltipContentStyle
+                                        <button
+                                            type="button"
+                                            aria-label={pin.label}
+                                            onMouseEnter={() =>
+                                                showTooltip(pin.id)
+                                            }
+                                            onMouseLeave={scheduleHideTooltip}
+                                            onFocus={() => showTooltip(pin.id)}
+                                            onBlur={scheduleHideTooltip}
+                                            onClick={() => showTooltip(pin.id)}
+                                            style={{
+                                                position: "absolute",
+                                                left: pinLeft,
+                                                top: pinTop,
+                                                width: `${pinWidth}px`,
+                                                height: `${pinHeight}px`,
+                                                transform:
+                                                    "translate(-50%, -50%)",
+                                                background: "transparent",
+                                                border: "none",
+                                                padding: 0,
+                                                cursor: "pointer",
+                                                pointerEvents: "auto",
+                                            }}
+                                        >
+                                            <Image
+                                                src="/images/Soft-Brown-Modern-Rip-Instagram-Post-72-1-1.svg"
+                                                alt="Map pin"
+                                                fill
+                                                sizes={`${pinWidth}px`}
+                                                style={{ objectFit: "contain" }}
+                                            />
+                                        </button>
+
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                left: pinLeft,
+                                                top: `calc(${pinTop} - ${pinTooltipYOffset}px)`,
+                                                transform: "translate(-50%, 0)",
+                                                pointerEvents: "auto",
+                                            }}
+                                        >
+                                            <AnimatePresence>
+                                                {activeTooltip === pin.id && (
+                                                    <motion.button
+                                                        key={`${pin.id}-tooltip`}
+                                                        type="button"
+                                                        variants={
+                                                            tooltipVariants
                                                         }
+                                                        initial="hidden"
+                                                        animate="visible"
+                                                        exit="exit"
+                                                        onMouseEnter={() => {
+                                                            if (
+                                                                hideTimeout.current
+                                                            )
+                                                                clearTimeout(
+                                                                    hideTimeout.current,
+                                                                );
+                                                        }}
+                                                        onMouseLeave={
+                                                            scheduleHideTooltip
+                                                        }
+                                                        onFocus={() => {
+                                                            if (
+                                                                hideTimeout.current
+                                                            )
+                                                                clearTimeout(
+                                                                    hideTimeout.current,
+                                                                );
+                                                        }}
+                                                        onBlur={
+                                                            scheduleHideTooltip
+                                                        }
+                                                        onClick={() =>
+                                                            openPopupFor(pin.id)
+                                                        }
+                                                        data-direction="down"
+                                                        className="experience-tooltip"
+                                                        style={{
+                                                            ...tooltipBaseStyle,
+                                                            fontSize: 26,
+                                                            zIndex: 20,
+                                                        }}
                                                     >
                                                         <span
                                                             style={
-                                                                tooltipIconStyle
+                                                                tooltipContentStyle
                                                             }
                                                         >
-                                                            {renderTooltipIcon(
-                                                                pin.icon,
-                                                            )}
+                                                            <span
+                                                                style={
+                                                                    tooltipIconStyle
+                                                                }
+                                                            >
+                                                                {renderTooltipIcon(
+                                                                    pin.icon,
+                                                                )}
+                                                            </span>
+                                                            <span
+                                                                style={
+                                                                    tooltipTextStyle
+                                                                }
+                                                            >
+                                                                {pin.label}
+                                                            </span>
                                                         </span>
                                                         <span
-                                                            style={
-                                                                tooltipTextStyle
-                                                            }
-                                                        >
-                                                            {pin.label}
-                                                        </span>
-                                                    </span>
-                                                    <span
-                                                        aria-hidden="true"
-                                                        style={getTooltipArrowStyle(
-                                                            "down",
-                                                        )}
-                                                    />
-                                                </motion.button>
-                                            )}
-                                        </AnimatePresence>
+                                                            aria-hidden="true"
+                                                            style={getTooltipArrowStyle(
+                                                                "down",
+                                                            )}
+                                                        />
+                                                    </motion.button>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -919,14 +737,6 @@ export default function ExperiencePage() {
                     />
                 )}
             </AnimatePresence>
-
-            <style jsx>{`
-                @media (max-width: 768px) {
-                    .headmenu {
-                        gap: 12px;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
