@@ -247,17 +247,13 @@ export default function ExecutionPage() {
                                     </button>
 
                                     <div className="execution-center">
-                                        <button
-                                            type="button"
-                                            className="execution-center-button"
+                                        <img
                                             onClick={handleOpenInteractive}
                                             aria-label="Open interactive execution menu"
-                                        >
-                                            <img
-                                                src={PREVIEW_IMAGES.center}
-                                                alt="Execution command hub"
-                                            />
-                                        </button>
+                                            src={PREVIEW_IMAGES.center}
+                                            alt="Execution command hub"
+                                        />
+
                                         <p>
                                             From staffing to attendance, total
                                             visibility and control
@@ -290,26 +286,6 @@ export default function ExecutionPage() {
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className="execution-back-row">
-                                    {!videoVisible && (
-                                        <button
-                                            type="button"
-                                            className="execution-back"
-                                            onClick={handleBack}
-                                        >
-                                            <span className="execution-back-icon">
-                                                <svg
-                                                    aria-hidden="true"
-                                                    viewBox="0 0 512 512"
-                                                >
-                                                    <path d="M256 504C119 504 8 393 8 256S119 8 256 8s248 111 248 248-111 248-248 248zm28.9-143.6L209.4 288H392c13.3 0 24-10.7 24-24v-16c0-13.3-10.7-24-24-24H209.4l75.5-72.4c9.7-9.3 9.9-24.8.4-34.3l-11-10.9c-9.4-9.4-24.6-9.4-33.9 0L107.7 239c-9.4 9.4-9.4 24.6 0 33.9l132.7 132.7c9.4 9.4 24.6 9.4 33.9 0l11-10.9c9.5-9.5 9.3-25-.4-34.3z" />
-                                                </svg>
-                                            </span>
-                                            Back
-                                        </button>
-                                    )}
-                                </div>
-
                                 <div className="execution-interactive-content">
                                     <div
                                         className={`execution-center-box ${menuExiting || videoVisible ? "center-zoom-out" : ""}`}
@@ -410,7 +386,6 @@ export default function ExecutionPage() {
                     width: 100%;
                     background: #0c1118;
                     padding: 28px;
-                    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
                 }
 
                 .execution-header :global(.header) {
@@ -475,29 +450,52 @@ export default function ExecutionPage() {
                     gap: 40px;
                     align-items: center;
                     justify-items: center;
+                    margin-top: 26px;
                 }
 
                 .execution-thumb {
-                    border: 2px solid #d7e3f4;
+                    border: 2px solid transparent;
                     background: #ffffff;
                     cursor: pointer;
                     padding: 0;
-                    border-radius: 16px;
+                    border-radius: 14px;
                     overflow: hidden;
-                    box-shadow: 0 12px 26px rgba(35, 62, 95, 0.18);
+                    position: relative;
+                    isolation: isolate;
                     transition: transform 0.3s ease;
                     width: 100%;
                     max-width: 420px;
                 }
 
-                .execution-thumb:hover {
-                    transform: translateY(-6px);
+                .execution-thumb::before {
+                    content: "";
+                    position: absolute;
+                    inset: -2px;
+                    border-radius: 18px;
+                    background: linear-gradient(
+                        135deg,
+                        #ffffff 0%,
+                        #2a74d3 70%,
+                        #ffffff 100%
+                    );
+                    z-index: 0;
+                }
+
+                .execution-thumb::after {
+                    content: "";
+                    position: absolute;
+                    inset: 2px;
+                    border-radius: 14px;
+                    background: #ffffff;
+                    z-index: 1;
                 }
 
                 .execution-thumb img {
                     width: 100%;
                     height: auto;
                     display: block;
+                    position: relative;
+                    z-index: 2;
                 }
 
                 .execution-center {
@@ -506,21 +504,6 @@ export default function ExecutionPage() {
                     align-items: center;
                     gap: 18px;
                     text-align: center;
-                }
-
-                .execution-center-button {
-                    width: 190px;
-                    height: 190px;
-                    border-radius: 50%;
-                    border: 3px solid #3b86c6;
-                    padding: 0;
-                    background: #ffffff;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 12px 26px rgba(45, 114, 183, 0.25);
-                    overflow: hidden;
                 }
 
                 .execution-center-button img {
@@ -534,6 +517,7 @@ export default function ExecutionPage() {
                     font-size: 16px;
                     color: #4b4b4b;
                     line-height: 1.4;
+                    font-weight: 500;
                 }
 
                 .execution-interactive {
@@ -546,36 +530,6 @@ export default function ExecutionPage() {
                     flex-direction: column;
                     gap: 16px;
                     margin: 0 auto;
-                }
-
-                .execution-back-row {
-                    min-height: 40px;
-                    display: flex;
-                    align-items: center;
-                }
-
-                .execution-back {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    background: transparent;
-                    border: none;
-                    color: #2d73b8;
-                    font-size: 18px;
-                    font-weight: 600;
-                    cursor: pointer;
-                }
-
-                .execution-back-icon {
-                    display: inline-flex;
-                    width: 24px;
-                    height: 24px;
-                }
-
-                .execution-back-icon svg {
-                    width: 100%;
-                    height: 100%;
-                    fill: #2d73b8;
                 }
 
                 .execution-interactive-content {

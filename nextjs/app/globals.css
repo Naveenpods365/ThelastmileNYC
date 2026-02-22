@@ -133,11 +133,12 @@ p {
     cursor: pointer;
     margin-top: 10px;
 }
-.header__linkedin :global(svg) {
+.header__linkedin svg {
     width: 32px;
     height: 32px;
     border-radius: 8px !important;
     overflow: hidden;
+    display: block;
 }
 .linkedin-box a {
     display: flex;
@@ -153,7 +154,12 @@ p {
     color: #ffffff;
     font-weight: 500;
     letter-spacing: -0.5px;
-    /* Removed order property since we swapped DOM structure */
+}
+
+.linkedin-box svg {
+    border-radius: 5px !important;
+    overflow: hidden;
+    display: block;
 }
 
 .linkedin-box .linkedin-icon-wrap {
@@ -450,7 +456,7 @@ p {
 }
 
 .capsule-link:hover {
-    color: #34ffb6;
+    color: #80d4fe;
 }
 
 .capsule-divider {
