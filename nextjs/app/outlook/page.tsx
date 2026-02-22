@@ -160,7 +160,7 @@ const WORD_CLOUD_DATA = [
 
 const OUTLOOK_VIDEO = {
     title: "Outlook",
-    src: "https://clientblob1.blob.core.windows.net/websitecontent/Outlook.mp4?sv=2025-05-05&se=2026-02-16T07:06:47Z&sr=b&sp=r&sig=6Eer2mhSv61NbmjwEydaKDP2qH7TzQjw3w2kx4MRkOA%3D",
+    src: "https://clientblob1.blob.core.windows.net/websitecontent/Outlook.mp4",
 };
 
 interface PopupProps {
@@ -208,7 +208,6 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
                     src={videoSrc}
                     controls
                     autoPlay
-                    muted
                     playsInline
                     preload="metadata"
                 />
@@ -454,10 +453,10 @@ export default function OutlookPage() {
                 }
 
                 :global(.popup-content) {
-                    background: #1a1a2e;
+                    background: #ffffff;
                     border-radius: 16px;
                     padding: 24px;
-                    max-width: 800px;
+                    max-width: 900px;
                     width: 100%;
                     position: relative;
                     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
@@ -471,8 +470,8 @@ export default function OutlookPage() {
                     height: 32px;
                     border-radius: 50%;
                     border: none;
-                    background: rgba(255, 255, 255, 0.1);
-                    color: white;
+                    background: rgba(0, 0, 0, 0.1);
+                    color: #333;
                     font-size: 16px;
                     cursor: pointer;
                     display: flex;
@@ -482,11 +481,11 @@ export default function OutlookPage() {
                 }
 
                 :global(.popup-close:hover) {
-                    background: rgba(255, 255, 255, 0.2);
+                    background: rgba(0, 0, 0, 0.2);
                 }
 
                 :global(.popup-title) {
-                    color: white;
+                    color: #333;
                     margin: 0 0 16px 0;
                     font-size: 20px;
                     font-weight: 600;
