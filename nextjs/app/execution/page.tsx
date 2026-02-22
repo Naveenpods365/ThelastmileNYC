@@ -366,7 +366,7 @@ export default function ExecutionPage() {
 
             <style jsx>{`
                 :global(body) {
-                    background-color: #f7f9fc;
+                    background-color: #111;
                     background-image: url("/images/execution-bg.webp");
                     background-size: cover;
                     background-position: center;
@@ -385,6 +385,9 @@ export default function ExecutionPage() {
                 .execution-header {
                     width: 100%;
                     background: #0c1118;
+                    background-image: url("/images/home-new-1-1.png");
+                    background-size: cover;
+                    background-position: top;
                     padding: 28px;
                 }
 

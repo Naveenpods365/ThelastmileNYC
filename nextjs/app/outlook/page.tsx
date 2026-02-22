@@ -343,7 +343,6 @@ export default function OutlookPage() {
             <style jsx>{`
                 .outlook-page {
                     min-height: 100vh;
-                    background-color: #000;
                     position: relative;
                     overflow: hidden;
                 }
