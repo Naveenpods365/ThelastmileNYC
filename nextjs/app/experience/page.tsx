@@ -441,7 +441,7 @@ export default function ExperiencePage() {
                 <div
                     style={{
                         width: "100%",
-                        borderRadius: 14,
+                        borderRadius: 21,
                         overflow: "hidden",
                         border: "2px solid rgba(255,255,255,0.06)",
                         boxShadow: "0 24px 70px rgba(0,0,0,0.55)",
