@@ -13,11 +13,11 @@ const PREVIEW_IMAGES = {
 const POPUP_VIDEOS = {
     workforce: {
         title: "Workforce Visibility",
-        src: "https://clientblob1.blob.core.windows.net/websitecontent/Why_sheludling.mp4?sv=2025-05-05&se=2026-02-13T12%3A13%3A39Z&sr=b&sp=r&sig=PE5aUj7kdljgKzwLBqwa%2Fur%2FIAImFFkrt0Kn%2BfMH4E0%3D",
+        src: "https://clientblob1.blob.core.windows.net/websitecontent/Why_sheludling.mp4",
     },
     alignment: {
         title: "Schedule Alignment",
-        src: "https://clientblob1.blob.core.windows.net/websitecontent/FINAL_Sched_Align_Saas_Video.mp4?sv=2025-05-05&se=2026-02-13T12%3A13%3A39Z&sr=b&sp=r&sig=pP4BLJYomz0OEhOWeVCw7xXYYlGKH4v24UYV0Mc4y3s%3D",
+        src: "https://clientblob1.blob.core.windows.net/websitecontent/FINAL_Sched_Align_Saas_Video.mp4",
     },
 } as const;
 
@@ -247,12 +247,17 @@ export default function ExecutionPage() {
                                     </button>
 
                                     <div className="execution-center">
-                                        <img
+                                        <button
+                                            type="button"
+                                            className="execution-center-button"
                                             onClick={handleOpenInteractive}
                                             aria-label="Open interactive execution menu"
-                                            src={PREVIEW_IMAGES.center}
-                                            alt="Execution command hub"
-                                        />
+                                        >
+                                            <img
+                                                src={PREVIEW_IMAGES.center}
+                                                alt="Execution command hub"
+                                            />
+                                        </button>
 
                                         <p>
                                             From staffing to attendance, total
@@ -366,7 +371,7 @@ export default function ExecutionPage() {
 
             <style jsx>{`
                 :global(body) {
-                    background-color: #111;
+                    background-color: #f2f6fb;
                     background-image: url("/images/execution-bg.webp");
                     background-size: cover;
                     background-position: center;
@@ -384,11 +389,13 @@ export default function ExecutionPage() {
 
                 .execution-header {
                     width: 100%;
-                    background: #0c1118;
                     background-image: url("/images/home-new-1-1.png");
                     background-size: cover;
                     background-position: top;
-                    padding: 28px;
+                    background-repeat: no-repeat;
+
+                    padding: 26px 32px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
                 }
 
                 .execution-header :global(.header) {
@@ -407,11 +414,17 @@ export default function ExecutionPage() {
                     margin: 0;
                 }
 
+                .execution-header :global(.icon-box-title) {
+                    font-size: 26px;
+                    font-weight: 500;
+                    letter-spacing: -0.3px;
+                }
+
                 .execution-body {
                     flex: 1;
                     display: flex;
                     justify-content: center;
-                    padding: 34px 32px 60px;
+                    padding: 50px 32px 70px;
                     width: 100%;
                 }
 
@@ -420,8 +433,8 @@ export default function ExecutionPage() {
                     max-width: 1200px;
                     display: flex;
                     flex-direction: column;
-                    gap: 26px;
-                    padding: 8px 0 0;
+                    gap: 30px;
+                    padding: 10px 0 0;
                     margin: 0 auto;
                 }
 
@@ -430,56 +443,64 @@ export default function ExecutionPage() {
                 }
 
                 .execution-hero h2 {
-                    font-size: 26px;
-                    font-weight: 600;
+                    font-size: 25px;
+                    font-weight: 700;
                     letter-spacing: -0.01em;
-                    color: #3c3c3c;
+                    color: #3d3f42;
                 }
 
                 .execution-hero h3 {
                     margin-top: 6px;
-                    font-size: 40px;
-                    font-weight: 700;
+                    font-size: 44px;
+                    font-weight: 800;
                     letter-spacing: -0.02em;
-                    color: #2d73b8;
+                    color: #2c71b9;
+                    background: var(
+                        --Path,
+                        linear-gradient(290deg, #2a9ed8 27.26%, #294e9d 70.41%)
+                    );
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
                 }
 
                 .execution-grid {
                     display: grid;
-                    grid-template-columns: minmax(280px, 1fr) 240px minmax(
-                            280px,
+                    grid-template-columns: minmax(300px, 1fr) 260px minmax(
+                            300px,
                             1fr
                         );
-                    gap: 40px;
-                    align-items: center;
+                    gap: 50px;
+                    align-items: flex-end;
                     justify-items: center;
-                    margin-top: 26px;
                 }
 
                 .execution-thumb {
                     border: 2px solid transparent;
                     background: #ffffff;
                     cursor: pointer;
-                    padding: 0;
-                    border-radius: 14px;
+                    padding: 8px;
+                    border-radius: 22px;
                     overflow: hidden;
                     position: relative;
                     isolation: isolate;
-                    transition: transform 0.3s ease;
+                    transition:
+                        transform 0.3s ease,
+                        box-shadow 0.3s ease;
                     width: 100%;
-                    max-width: 420px;
+                    max-width: 380px;
+                    box-shadow: 0 20px 36px rgba(26, 58, 100, 0.16);
                 }
 
                 .execution-thumb::before {
                     content: "";
                     position: absolute;
-                    inset: -2px;
-                    border-radius: 18px;
+                    inset: -3px;
                     background: linear-gradient(
-                        135deg,
-                        #ffffff 0%,
-                        #2a74d3 70%,
-                        #ffffff 100%
+                        140deg,
+                        #e6f0ff 0%,
+                        #7fb2f3 45%,
+                        #d6e8ff 70%,
+                        #f4f8ff 100%
                     );
                     z-index: 0;
                 }
@@ -487,15 +508,21 @@ export default function ExecutionPage() {
                 .execution-thumb::after {
                     content: "";
                     position: absolute;
-                    inset: 2px;
-                    border-radius: 14px;
-                    background: #ffffff;
+                    inset: 3px;
+                    border-radius: 18px;
+                    background: linear-gradient(
+                        140deg,
+                        #e6f0ff 0%,
+                        #7fb2f3 45%,
+                        #d6e8ff 70%,
+                        #f4f8ff 100%
+                    );
                     z-index: 1;
                 }
 
                 .execution-thumb img {
                     width: 100%;
-                    height: auto;
+                    height: 100%;
                     display: block;
                     position: relative;
                     z-index: 2;
@@ -505,22 +532,46 @@ export default function ExecutionPage() {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 18px;
+                    gap: 20px;
                     text-align: center;
                 }
 
                 .execution-center-button img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
+                    width: 290px !important;
+                    height: 290px !important;
+                    object-fit: cover;
+                    position: relative;
+                    z-index: 2;
+                    animation: none;
+                }
+
+                .execution-center-button {
+                    border-radius: 50%;
+                    border: none;
+                    background: transparent;
+                    cursor: pointer;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    isolation: isolate;
+                }
+
+                .execution-center-button::after {
+                    content: "";
+                    position: absolute;
+                    inset: 6px;
+                    border-radius: 50%;
+                    background: #ffffff;
+                    z-index: 1;
                 }
 
                 .execution-center p {
                     max-width: 280px;
                     font-size: 16px;
-                    color: #4b4b4b;
+                    color: #020202ff;
                     line-height: 1.4;
-                    font-weight: 500;
+                    font-weight: 600;
                 }
 
                 .execution-interactive {
@@ -557,6 +608,7 @@ export default function ExecutionPage() {
                         transform 0.5s ease-in-out,
                         opacity 0.5s ease-in-out;
                     opacity: 1;
+                    margin-top: 74px;
                 }
 
                 .execution-center-box video {
@@ -579,7 +631,7 @@ export default function ExecutionPage() {
                     display: flex;
                     gap: 110px;
                     justify-content: center;
-                    margin-top: 40px;
+                    margin-top: 10px;
                     animation: bottomBounceOnce 1s ease-out 1;
                     animation-fill-mode: both;
                 }
@@ -618,13 +670,12 @@ export default function ExecutionPage() {
                 .execution-final-video {
                     display: block;
                     position: fixed;
-                    top: 20%;
+                    top: 13%;
                     left: 22%;
                     width: 55vw;
-                    height: 79vh;
+                    height: 89vh;
                     border-radius: 42px !important;
                     object-fit: contain;
-                    z-index: 9999;
                     pointer-events: none;
                     opacity: 0;
                     transform: scale(0);
@@ -693,17 +744,17 @@ export default function ExecutionPage() {
 
                 @media (max-width: 1200px) {
                     .execution-body {
-                        padding: 28px 24px 50px;
+                        padding: 38px 24px 56px;
                     }
 
                     .execution-grid {
                         grid-template-columns: 1fr;
-                        gap: 26px;
+                        gap: 28px;
                     }
 
                     .execution-center-button {
-                        width: 170px;
-                        height: 170px;
+                        width: 180px;
+                        height: 180px;
                     }
 
                     .execution-bottom {
@@ -720,11 +771,11 @@ export default function ExecutionPage() {
 
                 @media (max-width: 768px) {
                     .execution-header {
-                        padding: 14px 18px;
+                        padding: 16px 18px;
                     }
 
                     .execution-body {
-                        padding: 22px 18px 40px;
+                        padding: 28px 18px 44px;
                     }
 
                     .execution-hero h2 {
