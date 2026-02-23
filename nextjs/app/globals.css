@@ -634,6 +634,188 @@ p {
     display: block;
 }
 
+/* ===== EXPERIENCE TOOLTIP ===== */
+.experience-tooltip {
+    flex-direction: row;
+}
+
+/* ===== OUTLOOK PAGE ===== */
+.outlook-page {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.outlook-background {
+    position: absolute;
+    inset: 0;
+    background-image: url(/images/home-new-1-1.png);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.outlook-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: 100vh;
+    padding: 28px 28px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.outlook-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
+    background: url(/images/outlook-secbg.png);
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.outlook-header-wrapper {
+    position: absolute;
+    z-index: 5;
+    margin-bottom: -20px;
+    top: 12%;
+    left: 08%;
+    transform: translate(-50%, -50%);
+    scale: 0.8;
+}
+
+.outlook-header-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.outlook-header-button:hover {
+    transform: scale(1.02);
+}
+
+.outlook-header-image {
+    height: auto;
+    display: block;
+    cursor: pointer;
+}
+
+.wordcloud-container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.cloud-bg {
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 600px;
+    background: center/contain no-repeat url(/images/cloud.png);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.chart-wrapper {
+    width: 75%;
+    height: 70%;
+}
+
+@media (max-width: 1920px) {
+    .cloud-bg {
+        height: 620px;
+        max-width: 1200px;
+    }
+}
+
+@media (max-width: 1600px) {
+    .cloud-bg {
+        height: 558px;
+        max-width: 1080px;
+    }
+}
+
+@media (max-width: 1400px) {
+    .cloud-bg {
+        height: 560px;
+        max-width: 1080px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .cloud-bg {
+        height: 500px;
+        max-width: 970px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .cloud-bg {
+        height: 500px;
+        max-width: 960px;
+    }
+    .chart-wrapper {
+        height: 90%;
+        margin: 15px auto 5px auto;
+    }
+}
+
+@media (max-width: 992px) {
+    .cloud-bg {
+        height: 400px;
+        width: 100%;
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .outlook-container {
+        padding: 20px 16px;
+    }
+    .cloud-bg {
+        height: 300px;
+        width: 100%;
+    }
+    .cloud-image {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 560px) {
+    .cloud-bg {
+        height: 260px;
+    }
+}
+
+@media (max-width: 440px) {
+    .cloud-bg {
+        height: 200px;
+    }
+}
+
+@media (max-width: 375px) {
+    .cloud-bg {
+        height: 145px;
+    }
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
     from {

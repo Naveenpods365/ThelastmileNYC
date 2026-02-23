@@ -45,7 +45,6 @@ const tooltipBaseStyle = {
     padding: "12px 26px 12px 18px",
     display: "flex",
     alignItems: "center",
-    flexDirection: "row",
     justifyContent: "flex-start",
     gap: 0,
     boxShadow:
