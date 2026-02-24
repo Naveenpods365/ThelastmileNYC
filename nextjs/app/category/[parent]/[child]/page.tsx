@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import ChildTopicView from "@/components/ChildTopicView";
 
 const OUTLOOK_API_URL = "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
@@ -26,39 +26,7 @@ export default async function CategoryDetailPage({
     params,
 }: CategoryDetailPageProps) {
     const { parent, child } = await params;
-    return (
-        <div className="outlook-page">
-            <div className="outlook-background" />
-            <div className="outlook-container">
-                <Header />
-                <div className="outlook-content">
-                    <div
-                        style={{
-                            marginTop: "80px",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <div
-                            style={{
-                                background: "rgba(255,255,255,0.95)",
-                                borderRadius: "999px",
-                                padding: "10px 24px",
-                                fontWeight: 700,
-                                color: "#1d2c4f",
-                                boxShadow:
-                                    "0 12px 28px rgba(0, 0, 0, 0.18)",
-                                fontSize: "16px",
-                            }}
-                        >
-                            {parent} / {child}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    return <ChildTopicView parentSlug={parent} childSlug={child} />;
 }
 
 export async function generateStaticParams() {
