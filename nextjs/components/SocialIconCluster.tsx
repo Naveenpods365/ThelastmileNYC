@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 type SocialLinks = {
     apple?: string;
     blog?: string;
@@ -21,7 +23,7 @@ type IconConfig = {
     src: string;
     className: string;
     side: "left" | "right";
-    arrow: "left" | "right";
+    arrow?: "left" | "right";
 };
 
 const ICONS: IconConfig[] = [
@@ -47,7 +49,7 @@ const ICONS: IconConfig[] = [
         src: "/images/outlook-spotify.svg",
         className: "social-icon--spotify",
         side: "right",
-        arrow: "right",
+        arrow: undefined,
     },
     {
         id: "apple",
@@ -63,7 +65,7 @@ const ICONS: IconConfig[] = [
         src: "/images/outlook-youtube.svg",
         className: "social-icon--youtube",
         side: "right",
-        arrow: "right",
+        arrow: undefined,
     },
     {
         id: "instagram",
@@ -97,12 +99,18 @@ const openShare = async (url: string, title?: string) => {
     if (typeof navigator !== "undefined" && navigator.share) {
         try {
             await navigator.share({ url, title });
-            return;
         } catch {
-            // fall back to opening link
+            // user dismissed share sheet
+        }
+        return;
+    }
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+        try {
+            await navigator.clipboard.writeText(url);
+        } catch {
+            // ignore clipboard errors
         }
     }
-    window.open(url, "_blank", "noopener,noreferrer");
 };
 
 export default function SocialIconCluster({
@@ -110,93 +118,124 @@ export default function SocialIconCluster({
     showTooltips = false,
     shareTitle,
 }: SocialIconClusterProps) {
+    const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+    const hideTimerRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (hideTimerRef.current) {
+                window.clearTimeout(hideTimerRef.current);
+            }
+        };
+    }, []);
+
+    const handleEnter = (id: string) => {
+        if (!showTooltips) return;
+        if (hideTimerRef.current) {
+            window.clearTimeout(hideTimerRef.current);
+        }
+        setActiveTooltip(id);
+    };
+
+    const handleLeave = (id: string) => {
+        if (!showTooltips) return;
+        if (hideTimerRef.current) {
+            window.clearTimeout(hideTimerRef.current);
+        }
+        hideTimerRef.current = window.setTimeout(() => {
+            setActiveTooltip((current) => (current === id ? null : current));
+        }, 1000);
+    };
+
     return (
         <div className="child-topic-socials">
             {ICONS.map((icon) => {
                 const url = links?.[icon.id];
                 const hasLink = Boolean(url);
+                const showTooltip = activeTooltip === icon.id;
                 return (
                     <div
                         key={icon.id}
                         className={`social-icon ${icon.className} ${
-                            hasLink ? "is-active" : "is-disabled"
+                            showTooltip ? "is-tooltip-visible" : ""
                         }`}
+                        onMouseEnter={() => handleEnter(icon.id)}
+                        onMouseLeave={() => handleLeave(icon.id)}
                     >
-                        {hasLink ? (
-                            <a
-                                className="social-icon__button"
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={icon.label}
-                            >
-                                <img
-                                    src={icon.src}
-                                    alt={icon.label}
-                                    className="social-icon__img"
-                                />
-                            </a>
-                        ) : (
-                            <div
-                                className="social-icon__button"
-                                aria-label={icon.label}
-                            >
-                                <img
-                                    src={icon.src}
-                                    alt={icon.label}
-                                    className="social-icon__img"
-                                />
-                            </div>
-                        )}
+                        <div
+                            className="social-icon__button"
+                            aria-label={icon.label}
+                        >
+                            <img
+                                src={icon.src}
+                                alt={icon.label}
+                                className="social-icon__img"
+                            />
+                        </div>
 
-                        {showTooltips && hasLink ? (
+                        {showTooltips && showTooltip ? (
                             <div className="social-tooltip">
-                                <button
-                                    type="button"
-                                    className="social-tooltip__btn"
-                                    onClick={() =>
-                                        openShare(url as string, shareTitle)
-                                    }
-                                >
-                                    <img
-                                        src="/images/share-outlook.svg"
-                                        alt=""
-                                        className="social-tooltip__icon"
-                                    />
-                                    Share
-                                </button>
-                                <span className="social-tooltip__divider" />
-                                <a
-                                    className="social-tooltip__btn"
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <img
-                                        src="/images/view-outlook.svg"
-                                        alt=""
-                                        className="social-tooltip__icon"
-                                    />
-                                    View
-                                </a>
+                                {hasLink ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className="social-tooltip__btn"
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                                openShare(
+                                                    url as string,
+                                                    shareTitle,
+                                                );
+                                            }}
+                                        >
+                                            <img
+                                                src="/images/share-outlook.svg"
+                                                alt=""
+                                                className="social-tooltip__icon"
+                                            />
+                                            Share
+                                        </button>
+                                        <span className="social-tooltip__divider" />
+                                        <a
+                                            className="social-tooltip__btn"
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <img
+                                                src="/images/view-outlook.svg"
+                                                alt=""
+                                                className="social-tooltip__icon"
+                                            />
+                                            View
+                                        </a>
+                                    </>
+                                ) : (
+                                    <span className="social-tooltip__message">
+                                        This will be coming soon.
+                                    </span>
+                                )}
                             </div>
                         ) : null}
 
-                        <span
-                            className={`social-icon__arrow social-icon__arrow--${
-                                icon.side
-                            }`}
-                            aria-hidden="true"
-                        >
-                            <img
-                                src={
-                                    icon.arrow === "left"
-                                        ? "/images/arrow-left.png"
-                                        : "/images/arrow-right.png"
-                                }
-                                alt=""
-                            />
-                        </span>
+                        {icon.arrow ? (
+                            <span
+                                className={`social-icon__arrow social-icon__arrow--${
+                                    icon.side
+                                }`}
+                                aria-hidden="true"
+                            >
+                                <img
+                                    src={
+                                        icon.arrow === "left"
+                                            ? "/images/arrow-left.png"
+                                            : "/images/arrow-right.png"
+                                    }
+                                    alt=""
+                                />
+                            </span>
+                        ) : null}
                     </div>
                 );
             })}
