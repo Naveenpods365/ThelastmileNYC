@@ -144,7 +144,6 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
     );
 }
 
-
 export default function ChildTopicView({
     parentSlug,
     childSlug,
@@ -220,8 +219,6 @@ export default function ChildTopicView({
         [meta],
     );
 
-
-
     return (
         <div className="outlook-page">
             <div className="outlook-background" />
@@ -286,11 +283,18 @@ export default function ChildTopicView({
                             <>
                                 <div className="child-topic-card-wrap">
                                     <div className="child-topic-card">
-                                        <div className="child-topic-card__image">
+                                        <div
+                                            className="child-topic-card__image"
+                                            style={{ position: "relative" }}
+                                        >
                                             {cardImage ? (
-                                                <img
+                                                <Image
                                                     src={cardImage}
                                                     alt={cardTitle}
+                                                    fill
+                                                    style={{
+                                                        objectFit: "cover",
+                                                    }}
                                                 />
                                             ) : (
                                                 <div className="child-topic-card__placeholder" />

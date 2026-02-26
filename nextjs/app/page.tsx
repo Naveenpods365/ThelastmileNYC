@@ -214,7 +214,6 @@ export default function HomePage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
             >
-               
                 {/* ═══ LEFT COLUMN (content-left) ═══ */}
                 <div className="content-left">
                     {" "}
