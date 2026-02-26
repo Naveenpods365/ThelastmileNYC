@@ -1077,7 +1077,8 @@ p {
 
 .social-tooltip {
     position: absolute;
-    width: 148px;
+    width: max-content;
+    min-width: 0;
     left: 50%;
     top: -12px;
     transform: translate(-50%, -100%);
@@ -1102,7 +1103,7 @@ p {
     opacity: 1;
     transform: translate(-50%, -112%);
     pointer-events: auto;
-    width: 148px;
+    width: max-content;
 }
 
 .social-tooltip__btn {
@@ -1139,7 +1140,7 @@ p {
     font-weight: 600;
     color: #1d2c4f;
     padding: 4px;
-    min-width: 148px !important;
+    min-width: 220px !important;
 }
 
 .child-topic-loading {
