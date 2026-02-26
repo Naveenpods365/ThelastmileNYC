@@ -1102,6 +1102,7 @@ p {
     opacity: 1;
     transform: translate(-50%, -112%);
     pointer-events: auto;
+    width: 148px;
 }
 
 .social-tooltip__btn {
@@ -1137,7 +1138,8 @@ p {
     font-size: 14px;
     font-weight: 600;
     color: #1d2c4f;
-    padding: 6px 8px;
+    padding: 4px;
+    min-width: 148px !important;
 }
 
 .child-topic-loading {
