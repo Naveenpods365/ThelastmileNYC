@@ -20,6 +20,8 @@ type IconConfig = {
     label: string;
     src: string;
     className: string;
+    side: "left" | "right";
+    arrow: "left" | "right";
 };
 
 const ICONS: IconConfig[] = [
@@ -28,36 +30,48 @@ const ICONS: IconConfig[] = [
         label: "Blog",
         src: "/images/outlook-blog.png",
         className: "social-icon--blog",
+        side: "left",
+        arrow: "left",
     },
     {
         id: "x",
         label: "X",
         src: "/images/outlook-x.svg",
         className: "social-icon--x",
+        side: "left",
+        arrow: "left",
     },
     {
         id: "spotify",
         label: "Spotify",
         src: "/images/outlook-spotify.svg",
         className: "social-icon--spotify",
+        side: "right",
+        arrow: "right",
     },
     {
         id: "apple",
         label: "Apple Podcasts",
         src: "/images/outlook-apple.png",
         className: "social-icon--podcast",
+        side: "right",
+        arrow: "right",
     },
     {
         id: "youtube",
         label: "YouTube",
         src: "/images/outlook-youtube.svg",
         className: "social-icon--youtube",
+        side: "right",
+        arrow: "right",
     },
     {
         id: "instagram",
         label: "Instagram",
         src: "/images/outlook-instagram.png",
         className: "social-icon--instagram",
+        side: "right",
+        arrow: "right",
     },
 ];
 
@@ -144,7 +158,11 @@ export default function SocialIconCluster({
                                         openShare(url as string, shareTitle)
                                     }
                                 >
-                                    <ShareGlyph />
+                                    <img
+                                        src="/images/share-outlook.svg"
+                                        alt=""
+                                        className="social-tooltip__icon"
+                                    />
                                     Share
                                 </button>
                                 <span className="social-tooltip__divider" />
@@ -154,11 +172,31 @@ export default function SocialIconCluster({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <ViewGlyph />
+                                    <img
+                                        src="/images/view-outlook.svg"
+                                        alt=""
+                                        className="social-tooltip__icon"
+                                    />
                                     View
                                 </a>
                             </div>
                         ) : null}
+
+                        <span
+                            className={`social-icon__arrow social-icon__arrow--${
+                                icon.side
+                            }`}
+                            aria-hidden="true"
+                        >
+                            <img
+                                src={
+                                    icon.arrow === "left"
+                                        ? "/images/arrow-left.png"
+                                        : "/images/arrow-right.png"
+                                }
+                                alt=""
+                            />
+                        </span>
                     </div>
                 );
             })}

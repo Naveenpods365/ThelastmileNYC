@@ -568,22 +568,21 @@ export default function OutlookView({
 
                 <div className="outlook-content">
                     {/* Outlook header image */}
-                    <div className="outlook-header-wrapper">
-                        <button
-                            className="outlook-header-button"
-                            onClick={() => setShowPopup(true)}
-                            aria-label="Play Outlook video"
-                        >
-                            <Image
-                                src="/images/Frame-1618873757.png"
-                                alt="What is Outlook"
-                                width={280}
-                                height={120}
-                                className="outlook-header-image"
-                                priority
-                            />
-                        </button>
-                    </div>
+                    <button
+                        className="outlook-header-wrapper"
+                        onClick={() => setShowPopup(true)}
+                        type="button"
+                        aria-label="Play Outlook video"
+                    >
+                        <Image
+                            src="/images/Frame-1618873757.png"
+                            alt="What is Outlook"
+                            width={280}
+                            height={120}
+                            className="outlook-header-image"
+                            priority
+                        />
+                    </button>
 
                     {/* Word cloud with cloud background */}
                     <div className="wordcloud-container">

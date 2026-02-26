@@ -2,11 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import Header from "@/components/Header";
 import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
     "https://schedalign.rohans.uno/api/GetWebSiteContentList";
+
+const OUTLOOK_VIDEO = {
+    title: "Outlook",
+    src: "https://clientblob1.blob.core.windows.net/websitecontent/Outlook.mp4",
+};
 
 type ApiCategoryMeta = {
     categoryType?: string;
@@ -85,6 +91,59 @@ const formatDateTime = (value?: string) => {
     return `${dateText} | ${timeText}`;
 };
 
+type PopupProps = {
+    title: string;
+    videoSrc: string;
+    onClose: () => void;
+};
+
+function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
+    useEffect(() => {
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === "Escape") onClose();
+        };
+        document.addEventListener("keydown", handleEsc);
+        return () => document.removeEventListener("keydown", handleEsc);
+    }, [onClose]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="popup-overlay"
+            onClick={onClose}
+            style={{ zIndex: 10000 }}
+        >
+            <motion.div
+                initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="popup-content"
+                onClick={(event) => event.stopPropagation()}
+            >
+                <button
+                    className="popup-close"
+                    onClick={onClose}
+                    aria-label="Close popup"
+                >
+                    X
+                </button>
+                <h2 className="popup-title">{title}</h2>
+                <video
+                    className="popup-video"
+                    src={videoSrc}
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                />
+            </motion.div>
+        </motion.div>
+    );
+}
+
 
 export default function ChildTopicView({
     parentSlug,
@@ -93,6 +152,7 @@ export default function ChildTopicView({
     const [items, setItems] = useState<ApiItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         let isActive = true;
@@ -160,26 +220,7 @@ export default function ChildTopicView({
         [meta],
     );
 
-    const siblingSlugs = useMemo(() => {
-        const list: string[] = [];
-        for (const item of items) {
-            for (const category of item.categories ?? []) {
-                if (category.slug !== parentSlug) continue;
-                for (const child of category.children ?? []) {
-                    if (child.slug) list.push(child.slug);
-                }
-            }
-        }
-        return Array.from(new Set(list));
-    }, [items, parentSlug]);
 
-    const activeIndex = siblingSlugs.indexOf(childSlug);
-    const prevSlug =
-        activeIndex > 0 ? siblingSlugs[activeIndex - 1] : null;
-    const nextSlug =
-        activeIndex >= 0 && activeIndex < siblingSlugs.length - 1
-            ? siblingSlugs[activeIndex + 1]
-            : null;
 
     return (
         <div className="outlook-page">
@@ -189,7 +230,12 @@ export default function ChildTopicView({
                 <Header />
 
                 <div className="outlook-content">
-                    <div className="outlook-header-wrapper">
+                    <button
+                        className="outlook-header-wrapper"
+                        onClick={() => setShowPopup(true)}
+                        type="button"
+                        aria-label="Play Outlook video"
+                    >
                         <Image
                             src="/images/Frame-1618873757.png"
                             alt="What is Outlook"
@@ -198,7 +244,7 @@ export default function ChildTopicView({
                             className="outlook-header-image"
                             priority
                         />
-                    </div>
+                    </button>
 
                     {/* navigation arrows removed per design */}
 
@@ -238,41 +284,53 @@ export default function ChildTopicView({
                             </div>
                         ) : (
                             <>
-                                <div className="child-topic-card">
-                                    <div className="child-topic-card__image">
-                                        {cardImage ? (
-                                            <img
-                                                src={cardImage}
-                                                alt={cardTitle}
-                                            />
-                                        ) : (
-                                            <div className="child-topic-card__placeholder" />
-                                        )}
-                                    </div>
-                                    <div className="child-topic-card__body">
-                                        <div className="child-topic-card__meta">
-                                            <span className="child-topic-card__dot" />
-                                            {dateText || "Published"}
+                                <div className="child-topic-card-wrap">
+                                    <div className="child-topic-card">
+                                        <div className="child-topic-card__image">
+                                            {cardImage ? (
+                                                <img
+                                                    src={cardImage}
+                                                    alt={cardTitle}
+                                                />
+                                            ) : (
+                                                <div className="child-topic-card__placeholder" />
+                                            )}
                                         </div>
-                                        <h3 className="child-topic-card__title">
-                                            {cardTitle}
-                                        </h3>
-                                        <p className="child-topic-card__text">
-                                            {cardContent}
-                                        </p>
+                                        <div className="child-topic-card__body">
+                                            <div className="child-topic-card__meta">
+                                                <span className="child-topic-card__dot" />
+                                                {dateText || "Published"}
+                                            </div>
+                                            <h3 className="child-topic-card__title">
+                                                {cardTitle}
+                                            </h3>
+                                            <p className="child-topic-card__text">
+                                                {cardContent}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <SocialIconCluster
-                                    links={socialLinks}
-                                    showTooltips
-                                    shareTitle={cardTitle}
-                                />
+                                    <SocialIconCluster
+                                        links={socialLinks}
+                                        showTooltips
+                                        shareTitle={cardTitle}
+                                    />
+                                </div>
                             </>
                         )}
                     </div>
                 </div>
             </div>
+
+            <AnimatePresence>
+                {showPopup && (
+                    <VideoPopup
+                        title={OUTLOOK_VIDEO.title}
+                        videoSrc={OUTLOOK_VIDEO.src}
+                        onClose={() => setShowPopup(false)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

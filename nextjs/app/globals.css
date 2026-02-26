@@ -692,6 +692,10 @@ p {
     left: 08%;
     transform: translate(-50%, -50%);
     scale: 0.8;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .outlook-header-button {
@@ -712,8 +716,6 @@ p {
     cursor: pointer;
 }
 
-
-
 .child-topic-nav__btn {
     width: 38px;
     height: 38px;
@@ -723,7 +725,9 @@ p {
     align-items: center;
     justify-content: center;
     box-shadow: 0 10px 18px rgba(0, 0, 0, 0.25);
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
 .child-topic-nav__btn img {
@@ -851,8 +855,17 @@ p {
     background: linear-gradient(135deg, #2db8ff 0%, #2ad1a8 100%);
 }
 
+.child-topic-card-wrap {
+    position: relative;
+    width: min(520px, 82vw);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
 .child-topic-card {
-    width: min(600px, 88vw);
+    width: 100%;
     background: #ffffff;
     border-radius: 22px;
     padding: 18px;
@@ -869,7 +882,7 @@ p {
     border-radius: 18px;
     overflow: hidden;
     background: #f2f5fb;
-    min-height: 200px;
+    min-height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -884,7 +897,7 @@ p {
 
 .child-topic-card__placeholder {
     width: 100%;
-    height: 200px;
+    height: 180px;
     background: linear-gradient(135deg, #e9eef7 0%, #f6f9ff 100%);
 }
 
@@ -972,11 +985,36 @@ p {
     transform: translateY(-2px) scale(1.02);
 }
 
+.social-icon__arrow {
+    position: absolute;
+    bottom: -12px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
 
+.social-icon__arrow img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.social-icon__arrow--left {
+    right: -06px;
+    scale: 2;
+    bottom: -10px;
+}
+
+.social-icon__arrow--right {
+    right: 8px;
+}
 
 .social-icon--blog {
-    left: 16%;
-    top: 44%;
+    left: -12%;
+    top: 18%;
 }
 
 .social-icon--blog .social-icon__button {
@@ -985,8 +1023,8 @@ p {
 }
 
 .social-icon--x {
-    left: 20%;
-    top: 68%;
+    left: -12%;
+    top: 66%;
 }
 
 .social-icon--x .social-icon__button {
@@ -995,8 +1033,8 @@ p {
 }
 
 .social-icon--spotify {
-    right: 22%;
-    top: 50%;
+    right: -12%;
+    top: 28%;
 }
 
 .social-icon--spotify .social-icon__button {
@@ -1005,8 +1043,8 @@ p {
 }
 
 .social-icon--podcast {
-    right: 18%;
-    top: 56%;
+    right: -8%;
+    top: 40%;
 }
 
 .social-icon--podcast .social-icon__button {
@@ -1015,8 +1053,8 @@ p {
 }
 
 .social-icon--youtube {
-    right: 21%;
-    top: 74%;
+    right: -10%;
+    top: 70%;
 }
 
 .social-icon--youtube .social-icon__button {
@@ -1025,8 +1063,8 @@ p {
 }
 
 .social-icon--instagram {
-    right: 17%;
-    top: 78%;
+    right: -6%;
+    top: 76%;
 }
 
 .social-icon--instagram .social-icon__button {
@@ -1034,21 +1072,23 @@ p {
     box-shadow: none;
 }
 
-
 .social-tooltip {
     position: absolute;
+    width: 148px;
     left: 50%;
     top: -12px;
     transform: translate(-50%, -100%);
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 6px 10px;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
     opacity: 0;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
     pointer-events: none;
     color: #1d2c4f;
     font-size: 12px;
@@ -1075,14 +1115,19 @@ p {
 }
 
 .social-tooltip__btn svg {
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
+}
+
+.social-tooltip__icon {
+    width: 17px;
+    height: 17px;
 }
 
 .social-tooltip__divider {
     width: 1px;
     height: 16px;
-    background: #e0e6f0;
+    background: #bec1c7;
 }
 
 .child-topic-loading {
@@ -1096,23 +1141,26 @@ p {
 }
 
 @media (max-width: 1200px) {
+    .child-topic-card-wrap {
+        width: min(520px, 86vw);
+    }
     .social-icon--blog {
-        left: 12%;
+        left: -10%;
     }
     .social-icon--x {
-        left: 16%;
+        left: -6%;
     }
     .social-icon--spotify {
-        right: 16%;
+        right: -10%;
     }
     .social-icon--podcast {
-        right: 12%;
+        right: -6%;
     }
     .social-icon--youtube {
-        right: 16%;
+        right: -8%;
     }
     .social-icon--instagram {
-        right: 12%;
+        right: -4%;
     }
 }
 
@@ -1120,15 +1168,44 @@ p {
     .child-topic-pill {
         min-width: 260px;
     }
-    .child-topic-card {
-        width: min(480px, 92vw);
+    .child-topic-card-wrap {
+        width: min(440px, 92vw);
     }
     .social-icon {
         width: 42px;
         height: 42px;
     }
+    .social-icon--blog {
+        left: -6%;
+        top: 16%;
+    }
+    .social-icon--x {
+        left: -2%;
+        top: 64%;
+    }
+    .social-icon--spotify {
+        right: -6%;
+        top: 28%;
+    }
+    .social-icon--podcast {
+        right: -2%;
+        top: 40%;
+    }
+    .social-icon--youtube {
+        right: -4%;
+        top: 70%;
+    }
+    .social-icon--instagram {
+        right: 0%;
+        top: 76%;
+    }
     .social-tooltip {
         top: -10px;
+    }
+    .social-icon__arrow {
+        width: 18px;
+        height: 18px;
+        bottom: -10px;
     }
 }
 
