@@ -712,6 +712,35 @@ p {
     cursor: pointer;
 }
 
+
+
+.child-topic-nav__btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #3b78c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.child-topic-nav__btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.child-topic-nav__btn:hover {
+    transform: translateY(-1px);
+}
+
+.child-topic-nav__btn.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .wordcloud-container {
     width: 100%;
     flex: 1;
@@ -812,6 +841,10 @@ p {
     background: linear-gradient(135deg, #2d6bff 0%, #2bd1a8 100%);
     box-shadow: 0 6px 14px rgba(45, 107, 255, 0.35);
     white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .child-topic-pill__badge--alt {
@@ -819,7 +852,7 @@ p {
 }
 
 .child-topic-card {
-    width: min(680px, 92vw);
+    width: min(600px, 88vw);
     background: #ffffff;
     border-radius: 22px;
     padding: 18px;
@@ -836,7 +869,7 @@ p {
     border-radius: 18px;
     overflow: hidden;
     background: #f2f5fb;
-    min-height: 220px;
+    min-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -851,7 +884,7 @@ p {
 
 .child-topic-card__placeholder {
     width: 100%;
-    height: 220px;
+    height: 200px;
     background: linear-gradient(135deg, #e9eef7 0%, #f6f9ff 100%);
 }
 
@@ -901,8 +934,8 @@ p {
 
 .social-icon {
     position: absolute;
-    width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
     pointer-events: auto;
 }
 
@@ -920,88 +953,93 @@ p {
     position: relative;
 }
 
+.social-icon__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 14px;
+}
+
+.social-icon.is-disabled {
+    opacity: 0.5;
+}
+
+.social-icon.is-disabled .social-icon__button {
+    cursor: default;
+}
+
 .social-icon__button:hover {
     transform: translateY(-2px) scale(1.02);
 }
 
-.social-icon__letter {
-    font-weight: 800;
-    font-size: 20px;
-}
 
-.social-icon__svg {
-    width: 28px;
-    height: 28px;
-    fill: currentColor;
-    stroke: currentColor;
-    stroke-width: 1.4px;
-}
 
 .social-icon--blog {
-    left: 18%;
-    top: 45%;
+    left: 16%;
+    top: 44%;
 }
 
 .social-icon--blog .social-icon__button {
-    background: #4163c7;
+    background: transparent;
+    box-shadow: none;
 }
 
 .social-icon--x {
-    left: 22%;
-    top: 70%;
+    left: 20%;
+    top: 68%;
 }
 
 .social-icon--x .social-icon__button {
-    background: #000000;
+    background: transparent;
+    box-shadow: none;
 }
 
 .social-icon--spotify {
-    right: 24%;
+    right: 22%;
     top: 50%;
 }
 
 .social-icon--spotify .social-icon__button {
-    background: #1db954;
+    background: transparent;
+    box-shadow: none;
 }
 
 .social-icon--podcast {
-    right: 20%;
+    right: 18%;
     top: 56%;
 }
 
 .social-icon--podcast .social-icon__button {
-    background: #b94cff;
+    background: transparent;
+    box-shadow: none;
 }
 
 .social-icon--youtube {
-    right: 23%;
+    right: 21%;
     top: 74%;
 }
 
 .social-icon--youtube .social-icon__button {
-    background: #ff0000;
+    background: transparent;
+    box-shadow: none;
 }
 
 .social-icon--instagram {
-    right: 19%;
+    right: 17%;
     top: 78%;
 }
 
 .social-icon--instagram .social-icon__button {
-    background: radial-gradient(
-        circle at 30% 30%,
-        #feda75,
-        #fa7e1e 35%,
-        #d62976 60%,
-        #962fbf 80%,
-        #4f5bd5 100%
-    );
+    background: transparent;
+    box-shadow: none;
 }
+
 
 .social-tooltip {
     position: absolute;
-    left: 60px;
-    top: 6px;
+    left: 50%;
+    top: -12px;
+    transform: translate(-50%, -100%);
     background: #ffffff;
     border-radius: 12px;
     display: flex;
@@ -1010,7 +1048,6 @@ p {
     padding: 6px 10px;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
     opacity: 0;
-    transform: translateY(-6px);
     transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
     color: #1d2c4f;
@@ -1020,16 +1057,8 @@ p {
 
 .social-icon:hover .social-tooltip {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, -112%);
     pointer-events: auto;
-}
-
-.social-icon--spotify .social-tooltip,
-.social-icon--podcast .social-tooltip,
-.social-icon--youtube .social-tooltip,
-.social-icon--instagram .social-tooltip {
-    left: auto;
-    right: 60px;
 }
 
 .social-tooltip__btn {
@@ -1068,22 +1097,22 @@ p {
 
 @media (max-width: 1200px) {
     .social-icon--blog {
-        left: 14%;
+        left: 12%;
     }
     .social-icon--x {
-        left: 18%;
+        left: 16%;
     }
     .social-icon--spotify {
-        right: 18%;
+        right: 16%;
     }
     .social-icon--podcast {
-        right: 14%;
+        right: 12%;
     }
     .social-icon--youtube {
-        right: 18%;
+        right: 16%;
     }
     .social-icon--instagram {
-        right: 14%;
+        right: 12%;
     }
 }
 
@@ -1092,20 +1121,14 @@ p {
         min-width: 260px;
     }
     .child-topic-card {
-        width: min(520px, 92vw);
+        width: min(480px, 92vw);
     }
     .social-icon {
-        width: 46px;
-        height: 46px;
+        width: 42px;
+        height: 42px;
     }
     .social-tooltip {
-        left: 52px;
-    }
-    .social-icon--spotify .social-tooltip,
-    .social-icon--podcast .social-tooltip,
-    .social-icon--youtube .social-tooltip,
-    .social-icon--instagram .social-tooltip {
-        right: 52px;
+        top: -10px;
     }
 }
 

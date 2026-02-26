@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Header from "@/components/Header";
+import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
     "https://schedalign.rohans.uno/api/GetWebSiteContentList";
@@ -84,50 +85,6 @@ const formatDateTime = (value?: string) => {
     return `${dateText} | ${timeText}`;
 };
 
-const YouTubeGlyph = () => (
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        focusable="false"
-        className="social-icon__svg"
-    >
-        <path
-            d="M9.5 8.25L16 12l-6.5 3.75V8.25z"
-            fill="currentColor"
-        />
-    </svg>
-);
-
-const InstagramGlyph = () => (
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        focusable="false"
-        className="social-icon__svg"
-    >
-        <rect x="4.5" y="4.5" width="15" height="15" rx="4" ry="4" />
-        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" />
-        <circle cx="16.5" cy="7.5" r="1" />
-    </svg>
-);
-
-const ShareGlyph = () => (
-    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-        <path
-            d="M10.7 2.2l5.2 4.6-5.2 4.6V8.6c-3.6 0-6 1.5-7.7 4.8.5-4.4 2.9-7 7.7-7V2.2z"
-            fill="currentColor"
-        />
-    </svg>
-);
-
-const ViewGlyph = () => (
-    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-        <path
-            d="M10 4C5.5 4 2.3 7.4 1 10c1.3 2.6 4.5 6 9 6s7.7-3.4 9-6c-1.3-2.6-4.5-6-9-6zm0 9.5A3.5 3.5 0 1 1 10 6.5a3.5 3.5 0 0 1 0 7z"
-            fill="currentColor"
-        />
-    </svg>
-);
 
 export default function ChildTopicView({
     parentSlug,
@@ -191,65 +148,38 @@ export default function ChildTopicView({
     const cardContent = cleanText(match.item?.content);
     const dateText = formatDateTime(match.item?.publicationDate);
 
-    const socialItems = useMemo(
-        () => [
-            {
-                id: "blog",
-                label: "Medium",
-                url: meta?.mediumLink,
-                className: "social-icon--blog",
-                glyph: <span className="social-icon__letter">M</span>,
-            },
-            {
-                id: "x",
-                label: "X",
-                url: meta?.xSharingLink,
-                className: "social-icon--x",
-                glyph: <span className="social-icon__letter">X</span>,
-            },
-            {
-                id: "spotify",
-                label: "Spotify",
-                url: meta?.spotifySharingLink,
-                className: "social-icon--spotify",
-                glyph: <span className="social-icon__letter">S</span>,
-            },
-            {
-                id: "podcast",
-                label: "Apple Podcasts",
-                url: meta?.appleSharingLink,
-                className: "social-icon--podcast",
-                glyph: <span className="social-icon__letter">P</span>,
-            },
-            {
-                id: "youtube",
-                label: "YouTube",
-                url: meta?.youtubeSharingLink,
-                className: "social-icon--youtube",
-                glyph: <YouTubeGlyph />,
-            },
-            {
-                id: "instagram",
-                label: "Instagram",
-                url: meta?.instagramSharingLink,
-                className: "social-icon--instagram",
-                glyph: <InstagramGlyph />,
-            },
-        ],
+    const socialLinks = useMemo(
+        () => ({
+            apple: meta?.appleSharingLink,
+            blog: meta?.mediumLink,
+            instagram: meta?.instagramSharingLink,
+            spotify: meta?.spotifySharingLink,
+            x: meta?.xSharingLink,
+            youtube: meta?.youtubeSharingLink,
+        }),
         [meta],
     );
 
-    const handleShare = async (url: string, title: string) => {
-        if (typeof navigator !== "undefined" && navigator.share) {
-            try {
-                await navigator.share({ url, title });
-                return;
-            } catch {
-                // fall back to opening the link
+    const siblingSlugs = useMemo(() => {
+        const list: string[] = [];
+        for (const item of items) {
+            for (const category of item.categories ?? []) {
+                if (category.slug !== parentSlug) continue;
+                for (const child of category.children ?? []) {
+                    if (child.slug) list.push(child.slug);
+                }
             }
         }
-        window.open(url, "_blank", "noopener,noreferrer");
-    };
+        return Array.from(new Set(list));
+    }, [items, parentSlug]);
+
+    const activeIndex = siblingSlugs.indexOf(childSlug);
+    const prevSlug =
+        activeIndex > 0 ? siblingSlugs[activeIndex - 1] : null;
+    const nextSlug =
+        activeIndex >= 0 && activeIndex < siblingSlugs.length - 1
+            ? siblingSlugs[activeIndex + 1]
+            : null;
 
     return (
         <div className="outlook-page">
@@ -270,23 +200,31 @@ export default function ChildTopicView({
                         />
                     </div>
 
+                    {/* navigation arrows removed per design */}
+
                     <div className="child-topic-stage">
                         <div className="child-topic-toolbar">
                             <div className="child-topic-pill">
                                 <span className="child-topic-pill__text">
                                     {parentLabel}
                                 </span>
-                                <span className="child-topic-pill__badge">
+                                <a
+                                    className="child-topic-pill__badge"
+                                    href="/outlook"
+                                >
                                     New Topic
-                                </span>
+                                </a>
                             </div>
                             <div className="child-topic-pill">
                                 <span className="child-topic-pill__text">
                                     {childLabel}
                                 </span>
-                                <span className="child-topic-pill__badge child-topic-pill__badge--alt">
+                                <a
+                                    className="child-topic-pill__badge child-topic-pill__badge--alt"
+                                    href={`/category/${encodeURIComponent(parentSlug)}/`}
+                                >
                                     New Keyword
-                                </span>
+                                </a>
                             </div>
                         </div>
 
@@ -325,51 +263,11 @@ export default function ChildTopicView({
                                     </div>
                                 </div>
 
-                                <div className="child-topic-socials">
-                                    {socialItems.map((item) =>
-                                        item.url ? (
-                                            <div
-                                                key={item.id}
-                                                className={`social-icon ${item.className}`}
-                                            >
-                                                <a
-                                                    className="social-icon__button"
-                                                    href={item.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    aria-label={item.label}
-                                                >
-                                                    {item.glyph}
-                                                </a>
-                                                <div className="social-tooltip">
-                                                    <button
-                                                        type="button"
-                                                        className="social-tooltip__btn"
-                                                        onClick={() =>
-                                                            handleShare(
-                                                                item.url,
-                                                                cardTitle,
-                                                            )
-                                                        }
-                                                    >
-                                                        <ShareGlyph />
-                                                        Share
-                                                    </button>
-                                                    <span className="social-tooltip__divider" />
-                                                    <a
-                                                        className="social-tooltip__btn"
-                                                        href={item.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <ViewGlyph />
-                                                        View
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        ) : null,
-                                    )}
-                                </div>
+                                <SocialIconCluster
+                                    links={socialLinks}
+                                    showTooltips
+                                    shareTitle={cardTitle}
+                                />
                             </>
                         )}
                     </div>
