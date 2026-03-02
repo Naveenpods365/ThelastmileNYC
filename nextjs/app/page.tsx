@@ -2,14 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    LinkedInIcon,
-    TourIcon,
-    MenuCloseIcon,
-    MenuOpenIcon,
-} from "@/components/Icons";
+import { LinkedInIcon, TourIcon } from "@/components/Icons";
 import Header from "@/components/Header";
 /* ───────── ANIMATION VARIANTS ───────── */
 const tooltipVariants = {
@@ -28,34 +22,6 @@ const tooltipVariants = {
         transition: { duration: 0.2 },
         transitionEnd: { display: "none" },
     },
-};
-
-const menuVariants = {
-    closed: {
-        opacity: 0,
-        x: 20,
-        maxWidth: 0,
-        pointerEvents: "none" as const,
-        transition: { duration: 0.3 },
-    },
-    open: {
-        opacity: 1,
-        x: 0,
-        maxWidth: 400,
-        pointerEvents: "auto" as const,
-        transition: {
-            type: "spring" as const,
-            stiffness: 300,
-            damping: 30,
-            staggerChildren: 0.05,
-            delayChildren: 0.1,
-        },
-    },
-};
-
-const menuItemVariants = {
-    closed: { opacity: 0, x: 20 },
-    open: { opacity: 1, x: 0 },
 };
 
 /* ───────── TEXT SLIDER ───────── */
@@ -163,7 +129,6 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
 
 /* ───────── MAIN PAGE ───────── */
 export default function HomePage() {
-    const [menuOpen, setMenuOpen] = useState(false);
     const [tourPopup, setTourPopup] = useState(false);
     const [dspPopup, setDspPopup] = useState(false);
 
@@ -375,207 +340,7 @@ export default function HomePage() {
                 </div>
                 {/* ═══ RIGHT COLUMN (#vdeobg) ═══ */}
                 <div id="vdeobg">
-                    {/* LinkedIn box (mobile only) */}
-                    <div className="linkedin-box-mobile">
-                        <a
-                            href="https://www.linkedin.com/in/jim-royce/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="Connect with Us"
-                        >
-                            <LinkedInIcon />
-                            <span className="icon-box-title">
-                                Connect with Us
-                            </span>
-                        </a>
-                    </div>
-
-                    {/* ── Header / Menu ── */}
-                    <div className="headmenu">
-                        {/* Mega menu widget */}
-                        <div
-                            className="menu-widget"
-                            id="pushmenu"
-                            style={{
-                                position: "relative",
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                alignItems: "center",
-                                height: "50px",
-                            }}
-                        >
-                            <motion.div
-                                className="menu-container"
-                                layout
-                                initial={false}
-                                animate={{
-                                    width: menuOpen ? "auto" : 50,
-                                    backgroundColor: menuOpen
-                                        ? "rgba(51, 51, 51, 0.95)"
-                                        : "rgba(0,0,0,0)",
-                                    borderRadius: 50,
-                                }}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "flex-end",
-                                    overflow: "hidden",
-                                    height: "50px",
-                                    boxShadow: menuOpen
-                                        ? "0 4px 15px rgba(0, 0, 0, 0.3)"
-                                        : "none",
-                                    position: "relative", // Ensure stacking context
-                                    zIndex: 20,
-                                }}
-                                transition={{
-                                    type: "spring",
-                                    stiffness: 180,
-                                    damping: 30,
-                                    mass: 1,
-                                }}
-                            >
-                                <AnimatePresence
-                                    mode="popLayout"
-                                    initial={false}
-                                >
-                                    {!menuOpen ? (
-                                        <motion.button
-                                            layout="position"
-                                            key="open-btn"
-                                            className="menu-toggle-btn open"
-                                            onClick={() => setMenuOpen(true)}
-                                            initial={{ opacity: 0, scale: 0.5 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.5 }}
-                                            transition={{
-                                                duration: 0.3,
-                                                ease: "anticipate",
-                                            }}
-                                            aria-label="Open Menu"
-                                            style={{
-                                                background: "none",
-                                                border: "none",
-                                                cursor: "pointer",
-                                                padding: 0,
-                                                width: "50px",
-                                                height: "50px",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                position: "absolute", // Absolute to overlap nicely during transition
-                                                right: 0,
-                                            }}
-                                        >
-                                            <MenuOpenIcon />
-                                        </motion.button>
-                                    ) : (
-                                        <motion.div
-                                            layout="position"
-                                            key="menu-content"
-                                            className="menu-links-wrapper"
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{
-                                                opacity: 0,
-                                                x: -5,
-                                                transition: { duration: 0.15 },
-                                            }}
-                                            transition={{
-                                                duration: 0.3,
-                                                delay: 0.05,
-                                                ease: "easeOut",
-                                            }}
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                paddingRight: "6px",
-                                                paddingLeft: "24px",
-                                                gap: "15px",
-                                                whiteSpace: "nowrap",
-                                            }}
-                                        >
-                                            <div
-                                                className="menu-links-container"
-                                                style={{
-                                                    display: "flex",
-                                                    gap: "10px",
-                                                    alignItems: "center",
-                                                }}
-                                            >
-                                                <Link
-                                                    href="/experience"
-                                                    className="capsule-link"
-                                                >
-                                                    Experience
-                                                </Link>
-                                                <span className="capsule-divider">
-                                                    |
-                                                </span>
-                                                <Link
-                                                    href="/outlook"
-                                                    className="capsule-link"
-                                                >
-                                                    Expertise
-                                                </Link>
-                                                <span className="capsule-divider">
-                                                    |
-                                                </span>
-                                                <Link
-                                                    href="/execution"
-                                                    className="capsule-link"
-                                                >
-                                                    Execution
-                                                </Link>
-                                            </div>
-
-                                            <button
-                                                className="capsule-close-btn"
-                                                onClick={() =>
-                                                    setMenuOpen(false)
-                                                }
-                                                aria-label="Close Menu"
-                                                style={{ margin: 0 }} // Override any external margin
-                                            >
-                                                <svg
-                                                    width="12"
-                                                    height="12"
-                                                    viewBox="0 0 14 14"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M13 1L1 13M1 1L13 13"
-                                                        stroke="white"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        </div>
-
-                        {/* Logo */}
-                        <Link href="/">
-                            <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.8, type: "spring" }}
-                            >
-                                <Image
-                                    src="/images/logo-2.png"
-                                    alt="LastMile NYC"
-                                    width={174}
-                                    height={114}
-                                    className="logo-img"
-                                    priority
-                                />
-                            </motion.div>
-                        </Link>
-                    </div>
+                    <Header />
 
                     {/* ── Video (desktop) ── */}
                     <motion.div

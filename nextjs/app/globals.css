@@ -353,6 +353,12 @@ p {
     gap: 20px;
 }
 
+/* Home page header spacing */
+#homecss .header {
+    padding-top: 18px;
+    padding-bottom: 20px;
+}
+
 /* ===== HEADER COMPONENT (mobile/desktop toggle) ===== */
 .header__mobile {
     display: none;
@@ -515,6 +521,14 @@ p {
     aspect-ratio: 16/8.5;
     object-fit: cover;
     border-radius: 20px;
+}
+
+/* Hide home page desktop/laptop video */
+@media (min-width: 1025px) {
+    #vdeobg .linkedin-box {
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
 }
 
 /* ===== TEXT SLIDER ===== */
@@ -1682,7 +1696,7 @@ p {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        padding-top: 80px; /* Space for absolute header */
+       
         height: auto;
         min-height: auto !important; /* Allow content to dictate height */
         background: transparent; /* Rely on body background */
@@ -1724,6 +1738,7 @@ p {
         width: 32px;
         height: 32px;
         order: 2; /* Icon second */
+        border-radius: 2px !important; 
     }
 
     /* Header: Menu Top Right */
