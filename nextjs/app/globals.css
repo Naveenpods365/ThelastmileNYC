@@ -1915,7 +1915,9 @@ p {
         flex-direction: column !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
-
+    .Aboutus {
+        margin-left: -38px !important;
+    }
     .menu-list {
         display: flex;
         flex-direction: column !important;
@@ -1944,13 +1946,82 @@ p {
     .tooltip-1::before {
         content: "";
         position: absolute;
-        transform: rotate(90deg) !important; /* Point down */
+        transform: rotate(270deg) !important; /* Point down */
         left: 50%;
         top: 100%; /* Bottom edge */
         margin-left: -11px; /* Center */
         border-width: 11px;
         border-style: solid;
         border-color: transparent #fff transparent transparent;
+    }
+    .outlook-header-wrapper {
+        position: absolute;
+        z-index: 5;
+        margin: auto !important;
+        top: 15% !important;
+        left: 69% !important;
+        transform: translate(-50%, -50%);
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        scale: 1.1 !important;
+        width: 100% !important;
+    }
+    .cloud-bg {
+        height: 400px !important;
+        scale: 1.1 !important;
+        margin-top: 190px !important;
+        background: center/contain no-repeat
+            url(https://thelastmilenyc.com/wp-content/uploads/2024/08/Union-1.png) !important;
+    }
+    .wordcloud-toolbar {
+        position: absolute;
+        width: 100%;
+        top: 27%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        padding: 6px 8px 6px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+    }
+    .child-topic-toolbar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        z-index: 3;
+        margin-top: 210px;
+    }
+    .child-topic-pill__text {
+        font-weight: 700;
+        font-size: 14px !important;
+        color: #1d2c4f;
+        text-transform: capitalize;
+    }
+    .child-topic-card-wrap {
+        scale: 0.78 !important;
+        width: min(400px, 86vw) !important;
+    }
+    .social-icon--blog {
+        left: -10% !important;
+        top: 16%;
+    }
+    .social-icon--x {
+        left: -10% !important;
+    }
+    .social-icon__arrow--left {
+        right: 16px;
+        scale: 2;
+        bottom: -20px;
     }
 }
 

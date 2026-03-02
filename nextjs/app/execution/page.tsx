@@ -787,15 +787,22 @@ export default function ExecutionPage() {
                     }
 
                     .execution-center-box {
-                        width: 240px;
-                        height: 240px;
+                        width: 240px !important;
+                        height: 240px !important;
                     }
 
                     .execution-circle {
                         width: 120px;
                         height: 120px;
                     }
-
+                    .execution-center-button img {
+                        width: 100% !important;
+                        height: 100% !important;
+                        object-fit: cover;
+                        position: relative;
+                        z-index: 2;
+                        animation: none;
+                    }
                     .execution-final-video {
                         top: 16%;
                         left: 4%;

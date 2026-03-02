@@ -20,24 +20,6 @@ const PIN_W_PX_MOBILE = 120;
 const PIN_H_PX_MOBILE = 156;
 const MOBILE_MAP_BREAKPOINT_PX = 900;
 
-const tooltipVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 4, display: "none" as const },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        display: "block" as const,
-        transition: { type: "spring" as const, stiffness: 350, damping: 25 },
-    },
-    exit: {
-        opacity: 0,
-        scale: 0.95,
-        y: 4,
-        transition: { duration: 0.15 },
-        transitionEnd: { display: "none" as const },
-    },
-};
-
 const tooltipBaseStyle = {
     background: "#ffffff",
     border: "1px solid rgba(103, 61, 61, 0.06)",
@@ -307,6 +289,34 @@ export default function ExperiencePage() {
     const badgeSize = isMobileMap ? 110 : BADGE_SIZE_PX;
     const badgeTooltipLeft = badgeSize + (isMobileMap ? 16 : 28);
     const badgeTooltipTop = Math.round(badgeSize / 2) + (isMobileMap ? 12 : 0);
+    const tooltipScale = isMobileMap ? 0.82 : 1;
+
+    const tooltipVariants = {
+        hidden: {
+            opacity: 0,
+            scale: tooltipScale * 0.95,
+            y: 4,
+            display: "none" as const,
+        },
+        visible: {
+            opacity: 1,
+            scale: tooltipScale,
+            y: 0,
+            display: "block" as const,
+            transition: {
+                type: "spring" as const,
+                stiffness: 350,
+                damping: 25,
+            },
+        },
+        exit: {
+            opacity: 0,
+            scale: tooltipScale * 0.95,
+            y: 4,
+            transition: { duration: 0.15 },
+            transitionEnd: { display: "none" as const },
+        },
+    };
 
     const activePopupConfig = activePopup
         ? activePopup === ABOUT_JIM.id
@@ -545,14 +555,14 @@ export default function ExperiencePage() {
                                                 openPopupFor(ABOUT_JIM.id)
                                             }
                                             data-direction="left"
-                                            className="experience-tooltip"
+                                            className="experience-tooltip Aboutus"
                                             style={{
                                                 ...tooltipBaseStyle,
                                                 fontSize: 22,
                                                 zIndex: 20,
                                             }}
                                         >
-                                            <span style={tooltipContentStyle}>
+                                            <span style={tooltipContentStyle} >
                                                 <span style={tooltipIconStyle}>
                                                     {renderTooltipIcon(
                                                         ABOUT_JIM.icon,
@@ -589,6 +599,7 @@ export default function ExperiencePage() {
                                 const pinTop = isMobileMap
                                     ? pin.mobileTop
                                     : pin.top;
+                                const isActive = activeTooltip === pin.id;
 
                                 return (
                                     <div
@@ -597,6 +608,7 @@ export default function ExperiencePage() {
                                             position: "absolute",
                                             inset: 0,
                                             pointerEvents: "none",
+                                            zIndex: isActive ? 30 : 10,
                                         }}
                                     >
                                         <button
@@ -683,11 +695,9 @@ export default function ExperiencePage() {
                                                         style={{
                                                             ...tooltipBaseStyle,
                                                             fontSize: 26,
-                                                            zIndex:
-                                                                pin.id ===
-                                                                "innovation"
-                                                                    ? 60
-                                                                    : 20,
+                                                            zIndex: isActive
+                                                                ? 80
+                                                                : 20,
                                                         }}
                                                     >
                                                         <span
