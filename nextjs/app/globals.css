@@ -540,8 +540,8 @@ p {
 }
 
 .text-slider-widget {
-    width: 99%;
-    max-width: 99%;
+    width: 89%;
+    max-width: 89%;
     margin: -10px 0 0 20px;
 }
 
@@ -2022,6 +2022,14 @@ p {
         right: 16px;
         scale: 2;
         bottom: -20px;
+    }
+    .header__linkedin svg {
+        width: 32px;
+        height: 32px;
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 12px !important;
+        border-radius: 6px !important;
+        overflow: hidden;
     }
 }
 
