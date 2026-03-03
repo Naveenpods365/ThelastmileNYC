@@ -97,7 +97,10 @@ export default function ExecutionPage() {
     const [activePopup, setActivePopup] = useState<
         keyof typeof POPUP_VIDEOS | null
     >(null);
-    const [menuExiting, setMenuExiting] = useState(false);
+    const [disableAfterOpen, setDisableAfterOpen] = useState(false);
+    const [isExiting, setIsExiting] = useState(false);
+    const [centerBoxExiting, setCenterBoxExiting] = useState(false);
+    const [circlesExiting, setCirclesExiting] = useState(false);
     const [videoVisible, setVideoVisible] = useState(false);
     const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(
         null,
@@ -159,7 +162,8 @@ export default function ExecutionPage() {
             window.clearTimeout(transitionTimeout.current);
             transitionTimeout.current = null;
         }
-        setMenuExiting(false);
+        setCenterBoxExiting(false);
+        setCirclesExiting(false);
         setVideoVisible(false);
         setActiveVideoIndex(null);
         setMenuKey((prev) => prev + 1);
@@ -171,7 +175,12 @@ export default function ExecutionPage() {
     };
 
     const handleOpenInteractive = () => {
-        setShowInteractive(true);
+        setDisableAfterOpen(true);
+        setIsExiting(true);
+        setTimeout(() => {
+            setShowInteractive(true);
+            setIsExiting(false);
+        }, 350);
         resetMenu();
     };
 
@@ -181,15 +190,21 @@ export default function ExecutionPage() {
     };
 
     const handleOpenVideo = (index: number) => {
-        if (menuExiting || videoVisible) return;
-        setMenuExiting(true);
+        if (centerBoxExiting || circlesExiting || videoVisible) return;
+        setCenterBoxExiting(true);
         setActiveVideoIndex(index);
         if (transitionTimeout.current) {
             window.clearTimeout(transitionTimeout.current);
         }
+        // Step 1: Center box zooms out (0-400ms)
+        // Step 2: Circles bounce down (400-1000ms)
+        // Step 3: Video zooms in (1000ms+)
         transitionTimeout.current = window.setTimeout(() => {
-            setVideoVisible(true);
-        }, 700);
+            setCirclesExiting(true);
+            transitionTimeout.current = window.setTimeout(() => {
+                setVideoVisible(true);
+            }, 600);
+        }, 400);
     };
 
     const handleVideoEnded = () => {
@@ -210,7 +225,9 @@ export default function ExecutionPage() {
 
     return (
         <>
-            <div className="execution-page">
+            <div
+                className={`execution-page ${disableAfterOpen ? "no-anim" : ""}`}
+            >
                 <div className="execution-header">
                     <Header />
                 </div>
@@ -221,12 +238,16 @@ export default function ExecutionPage() {
                             <motion.section
                                 key="sec-1"
                                 className="execution-section"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3 }}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{
+                                    duration: disableAfterOpen ? 0 : 0.35,
+                                }}
                             >
-                                <div className="execution-hero">
+                                <div
+                                    className={`execution-hero ${isExiting ? "is-exiting" : ""}`}
+                                >
                                     <h2>Workforce Command</h2>
                                     <h3>Built for the Last Mile</h3>
                                 </div>
@@ -234,7 +255,7 @@ export default function ExecutionPage() {
                                 <div className="execution-grid">
                                     <button
                                         type="button"
-                                        className="execution-thumb"
+                                        className={`execution-thumb ${isExiting ? "is-exiting" : ""}`}
                                         onClick={() =>
                                             setActivePopup("workforce")
                                         }
@@ -259,7 +280,11 @@ export default function ExecutionPage() {
                                             />
                                         </button>
 
-                                        <p>
+                                        <p
+                                            className={
+                                                isExiting ? "is-exiting" : ""
+                                            }
+                                        >
                                             From staffing to attendance, total
                                             visibility and control
                                         </p>
@@ -267,7 +292,7 @@ export default function ExecutionPage() {
 
                                     <button
                                         type="button"
-                                        className="execution-thumb"
+                                        className={`execution-thumb ${isExiting ? "is-exiting" : ""}`}
                                         onClick={() =>
                                             setActivePopup("alignment")
                                         }
@@ -286,14 +311,20 @@ export default function ExecutionPage() {
                             <motion.section
                                 key="sec-2"
                                 className="execution-interactive"
-                                initial={{ opacity: 0, y: 10 }}
+                                initial={false}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3 }}
+                                exit={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0 }}
                             >
                                 <div className="execution-interactive-content">
                                     <div
-                                        className={`execution-center-box ${menuExiting || videoVisible ? "center-zoom-out" : ""}`}
+                                        className={`execution-center-box ${
+                                            centerBoxExiting ||
+                                            circlesExiting ||
+                                            videoVisible
+                                                ? "center-zoom-out"
+                                                : ""
+                                        }`}
                                         onClick={handleBack}
                                         role="button"
                                         tabIndex={0}
@@ -318,7 +349,7 @@ export default function ExecutionPage() {
 
                                     <div
                                         key={menuKey}
-                                        className={`execution-bottom ${menuExiting || videoVisible ? "bottom-exit" : ""}`}
+                                        className={`execution-bottom ${circlesExiting || videoVisible ? "bottom-exit" : ""}`}
                                     >
                                         {BUTTON_IMAGES.map((src, index) => (
                                             <button
@@ -440,6 +471,11 @@ export default function ExecutionPage() {
 
                 .execution-hero {
                     text-align: center;
+                    animation: zoomIn 0.5s ease-out forwards;
+                }
+
+                .execution-hero.is-exiting {
+                    animation: zoomOut 0.35s ease-in forwards;
                 }
 
                 .execution-hero h2 {
@@ -489,6 +525,11 @@ export default function ExecutionPage() {
                     width: 100%;
                     max-width: 380px;
                     box-shadow: 0 20px 36px rgba(26, 58, 100, 0.16);
+                    animation: zoomIn 0.5s ease-out forwards;
+                }
+
+                .execution-thumb.is-exiting {
+                    animation: zoomOut 0.35s ease-in forwards;
                 }
 
                 .execution-thumb::before {
@@ -537,8 +578,8 @@ export default function ExecutionPage() {
                 }
 
                 .execution-center-button img {
-                    width: 290px !important;
-                    height: 290px !important;
+                    width: 295px !important;
+                    height: 294px !important;
                     object-fit: cover;
                     position: relative;
                     z-index: 2;
@@ -555,6 +596,13 @@ export default function ExecutionPage() {
                     align-items: center;
                     justify-content: center;
                     isolation: isolate;
+                    transition: transform 0.3s ease-in-out;
+                }
+
+                .execution-center-button,
+                .execution-center-button img {
+                    animation: none !important;
+                    transition: none !important;
                 }
 
                 .execution-center-button::after {
@@ -572,6 +620,11 @@ export default function ExecutionPage() {
                     color: #020202ff;
                     line-height: 1.4;
                     font-weight: 600;
+                    animation: zoomIn 0.5s ease-out forwards;
+                }
+
+                .execution-center p.is-exiting {
+                    animation: zoomOut 0.35s ease-in forwards;
                 }
 
                 .execution-interactive {
@@ -598,15 +651,13 @@ export default function ExecutionPage() {
 
                 .execution-center-box {
                     position: relative;
-                    width: 299px;
-                    height: 299px;
+                    width: 309px;
+                    height: 309px;
                     background: #ffffff;
                     border-radius: 18px;
                     overflow: hidden;
                     cursor: pointer;
-                    transition:
-                        transform 0.5s ease-in-out,
-                        opacity 0.5s ease-in-out;
+                    transition: transform 0.3s ease-in-out;
                     opacity: 1;
                     margin-top: 74px;
                 }
@@ -634,6 +685,8 @@ export default function ExecutionPage() {
                     margin-top: 10px;
                     animation: bottomBounceOnce 1s ease-out 1;
                     animation-fill-mode: both;
+                    z-index: 1;
+                    position: relative;
                 }
 
                 .execution-circle {
@@ -682,11 +735,34 @@ export default function ExecutionPage() {
                     transition:
                         transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
                         opacity 0.5s ease;
+                    z-index: 100;
                 }
 
                 .execution-final-video.video-zoom-in {
                     opacity: 1;
                     pointer-events: auto;
+                }
+
+                @keyframes zoomIn {
+                    0% {
+                        transform: scale(0.85);
+                        opacity: 0;
+                    }
+                    100% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
+
+                @keyframes zoomOut {
+                    0% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(0.85);
+                        opacity: 0;
+                    }
                 }
 
                 @keyframes bounceWithPause {
