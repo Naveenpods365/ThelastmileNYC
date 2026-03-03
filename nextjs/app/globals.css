@@ -670,6 +670,17 @@ p {
     pointer-events: none;
 }
 
+.outlook-page.is-loading .outlook-background {
+    opacity: 0;
+}
+
+.outlook-page.is-loading .header,
+.outlook-page.is-loading .header__desktop,
+.outlook-page.is-loading .header__mobile {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .outlook-container {
     position: relative;
     z-index: 1;

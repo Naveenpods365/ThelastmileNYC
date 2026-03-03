@@ -220,7 +220,7 @@ export default function ChildTopicView({
     );
 
     return (
-        <div className="outlook-page">
+        <div className={`outlook-page ${loading ? "is-loading" : ""}`}>
             <div className="outlook-background" />
 
             <div className="outlook-container">

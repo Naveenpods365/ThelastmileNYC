@@ -1,40 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Image from "next/image";
 
 export function Preloader() {
     const [isLoading, setIsLoading] = useState(true);
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
-    const pathname = usePathname();
 
     useEffect(() => {
-        // Initial load
-        const timer = setTimeout(() => {
+        let exitTimer: ReturnType<typeof setTimeout> | null = null;
+        let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const startExit = () => {
             setIsAnimatingOut(true);
-            setTimeout(() => {
+            hideTimer = setTimeout(() => {
                 setIsLoading(false);
             }, 1200);
-        }, 2000);
+        };
 
-        return () => clearTimeout(timer);
+        if (document.readyState === "complete") {
+            exitTimer = setTimeout(startExit, 200);
+        } else {
+            window.addEventListener("load", startExit, { once: true });
+        }
+
+        return () => {
+            if (exitTimer) clearTimeout(exitTimer);
+            if (hideTimer) clearTimeout(hideTimer);
+            window.removeEventListener("load", startExit);
+        };
     }, []);
-
-    useEffect(() => {
-        // Show preloader on route change
-        setIsLoading(true);
-        setIsAnimatingOut(false);
-
-        const timer = setTimeout(() => {
-            setIsAnimatingOut(true);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1200);
-        }, 800);
-
-        return () => clearTimeout(timer);
-    }, [pathname]);
 
     if (!isLoading) return null;
 
@@ -47,16 +41,6 @@ export function Preloader() {
                 <div className="stairs stairs-4" />
                 <div className="stairs stairs-5" />
                 <div className="stairs stairs-6" />
-            </div>
-            <div className="preloader-content">
-                <Image
-                    src="/images/logo-2-1.png"
-                    alt="The Last Mile NYC"
-                    width={200}
-                    height={80}
-                    priority
-                    className="preloader-logo"
-                />
             </div>
             <style jsx>{`
                 .preloader {
@@ -121,26 +105,6 @@ export function Preloader() {
                     transform: translateY(-100%);
                 }
 
-                .preloader-content {
-                    position: relative;
-                    z-index: 2;
-                    opacity: 1;
-                    transform: scale(1);
-                    transition:
-                        opacity 0.4s ease,
-                        transform 0.4s ease;
-                }
-
-                .animate-out .preloader-content {
-                    opacity: 0;
-                    transform: scale(0.9);
-                }
-
-                .preloader-logo {
-                    width: 200px;
-                    height: auto;
-                    object-fit: contain;
-                }
             `}</style>
         </div>
     );
