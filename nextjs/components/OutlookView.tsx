@@ -275,14 +275,16 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
                     X
                 </button>
                 <h2 className="popup-title">{title}</h2>
-                <video
-                    className="popup-video"
-                    src={videoSrc}
-                    controls
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                />
+                <div className="popup-video-wrapper">
+                    <video
+                        className="popup-video"
+                        src={videoSrc}
+                        controls
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                    />
+                </div>
             </motion.div>
         </motion.div>
     );
@@ -379,7 +381,8 @@ export default function OutlookView({
                         }
 
                         const childBucket =
-                            childMap.get(slug) ?? new Map<string, ApiCategory>();
+                            childMap.get(slug) ??
+                            new Map<string, ApiCategory>();
                         (category.children ?? []).forEach((child) => {
                             const childSlug = child.slug;
                             if (!childSlug) return;
@@ -555,8 +558,8 @@ export default function OutlookView({
     }, [wordCloudData]);
 
     const activeCategoryLabel = activeCategory
-        ? rootWordCloudData.find((item) => item.slug === activeCategory)?.tag ??
-          activeCategory
+        ? (rootWordCloudData.find((item) => item.slug === activeCategory)
+              ?.tag ?? activeCategory)
         : null;
 
     return (
@@ -668,10 +671,21 @@ export default function OutlookView({
                     font-weight: 600;
                 }
 
+                :global(.popup-video-wrapper) {
+                    position: relative;
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                    background: #000;
+                    border-radius: 16px;
+                    overflow: hidden;
+                }
+
                 :global(.popup-video) {
                     width: 100%;
+                    height: 100%;
                     border-radius: 8px;
                     display: block;
+                    object-fit: contain;
                 }
             `}</style>
         </div>

@@ -131,14 +131,16 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
                     X
                 </button>
                 <h2 className="popup-title">{title}</h2>
-                <video
-                    className="popup-video"
-                    src={videoSrc}
-                    controls
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                />
+                <div className="popup-video-wrapper">
+                    <video
+                        className="popup-video"
+                        src={videoSrc}
+                        controls
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                    />
+                </div>
             </motion.div>
         </motion.div>
     );

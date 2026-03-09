@@ -644,8 +644,18 @@ p {
     border-radius: 8px;
     max-width: 100%;
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: contain;
+}
+
+.popup-video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
 }
 
 /* ===== EXPERIENCE TOOLTIP ===== */

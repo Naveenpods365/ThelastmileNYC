@@ -135,14 +135,16 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
                     ✕
                 </button>
                 <h2 className="popup-title">{title}</h2>
-                <video
-                    className="popup-video"
-                    src={videoSrc}
-                    controls
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                />
+                <div className="popup-video-wrapper">
+                    <video
+                        className="popup-video"
+                        src={videoSrc}
+                        controls
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                    />
+                </div>
             </motion.div>
         </motion.div>
     );
@@ -562,7 +564,7 @@ export default function ExperiencePage() {
                                                 zIndex: 20,
                                             }}
                                         >
-                                            <span style={tooltipContentStyle} >
+                                            <span style={tooltipContentStyle}>
                                                 <span style={tooltipIconStyle}>
                                                     {renderTooltipIcon(
                                                         ABOUT_JIM.icon,
