@@ -1,4 +1,5 @@
 import ChildTopicView from "@/components/ChildTopicView";
+import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL = "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
@@ -106,6 +107,13 @@ export default async function CategoryDetailPage({
     params,
 }: CategoryDetailPageProps) {
     const { parent, child } = await params;
+
+    // Validate if parent/child pair exists in our static params
+    const validParams = await fetchCategoryPairsWithCache();
+    if (!validParams.some((p) => p.parent === parent && p.child === child)) {
+        notFound();
+    }
+
     return <ChildTopicView parentSlug={parent} childSlug={child} />;
 }
 

@@ -1,4 +1,5 @@
 import OutlookView from "@/components/OutlookView";
+import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL = "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
@@ -125,6 +126,13 @@ async function fetchParentSlugs(): Promise<Array<{ parent: string }>> {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const { parent } = await params;
+
+    // Validate if parent exists in our static params to avoid build errors for unknown routes
+    const validParams = await fetchParentSlugsWithCache();
+    if (!validParams.some((p) => p.parent === parent)) {
+        notFound();
+    }
+
     return <OutlookView initialCategorySlug={parent} />;
 }
 

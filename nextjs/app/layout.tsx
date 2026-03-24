@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         siteName: "The Last Mile NYC",
         images: [
             {
-                url: "https://thelastmilenyc.com/wp-content/uploads/2025/08/home-new.png",
+                url: "/images/home-new.png",
                 width: 1200,
                 height: 630,
                 alt: "The Last Mile NYC",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         title: "Home - The Last Mile NYC",
         description: "The Last Mile NYC - Revolutionizing Last Mile Delivery",
         images: [
-            "https://thelastmilenyc.com/wp-content/uploads/2025/08/home-new.png",
+            "/images/home-new.png",
         ],
     },
     icons: {

@@ -6,9 +6,9 @@ import Header from "@/components/Header";
 import { VideoPopup } from "../../components/VideoPopup";
 
 const PREVIEW_IMAGES = {
-    left: "https://thelastmilenyc.com/wp-content/uploads/2026/01/Frame-1618873756-1-e1751978398145-1.png",
-    center: "https://thelastmilenyc.com/wp-content/uploads/2026/01/Frame-1618873446.png",
-    right: "https://thelastmilenyc.com/wp-content/uploads/2026/01/Frame-1618873758-e1751534035578.png",
+    left: "/images/whysched.png",
+    center: "/images/centerimg.png",
+    right: "/images/workspace.png",
 };
 
 const POPUP_VIDEOS = {
@@ -23,20 +23,20 @@ const POPUP_VIDEOS = {
 } as const;
 
 const CENTER_VIDEO = {
-    poster: "https://thelastmile.baglatd.in/wp-content/uploads/2025/11/Frame-1618873446.png",
-    src: "https://thelastmile.baglatd.in/wp-content/uploads/2026/01/Comp-1_18.mp4",
+    poster: "/images/centerimg.png",
+    src: "/images/Comp-1_18.mp4",
 };
 
 const BUTTON_VIDEOS = [
-    "https://thelastmile.baglatd.in/wp-content/uploads/2026/01/Pre-comp-1_2.mp4",
-    "https://thelastmile.baglatd.in/wp-content/uploads/2026/01/Pre-comp-1_1-1.mp4",
-    "https://thelastmile.baglatd.in/wp-content/uploads/2026/01/platfor-video-online-video-cutter.com_-1.mp4",
+    "/images/Comp-1_18.mp4",
+    "/images/Pre-comp.mp4",
+    "/images/platfor.mp4",
 ];
 
 const BUTTON_IMAGES = [
-    "https://thelastmile.baglatd.in/wp-content/uploads/2025/12/Button-14.png",
-    "https://thelastmile.baglatd.in/wp-content/uploads/2025/12/Button-17.png",
-    "https://thelastmile.baglatd.in/wp-content/uploads/2025/12/Button-16.png",
+    "/images/func.webp",
+    "/images/platform.webp",
+    "/images/rhythm.webp",
 ];
 
 export function ExecutionInteractive() {

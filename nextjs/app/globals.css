@@ -1994,7 +1994,7 @@ p {
         scale: 1.1 !important;
         margin-top: 190px !important;
         background: center/contain no-repeat
-            url(https://thelastmilenyc.com/wp-content/uploads/2024/08/Union-1.png) !important;
+            url(/images/Union-1.png) !important;
     }
     .wordcloud-toolbar {
         position: absolute;
