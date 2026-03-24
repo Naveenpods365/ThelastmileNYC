@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
+    process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL ||
     "https://schedalign.rohans.uno/api/GetWebSiteContentList";
 
 const OUTLOOK_VIDEO = {
