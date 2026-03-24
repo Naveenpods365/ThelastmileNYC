@@ -31,6 +31,52 @@ export function HomeInteractive() {
     const [dspPopup, setDspPopup] = useState(false);
     const [activeTooltip, setActiveTooltip] = useState<1 | 2 | null>(null);
     const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
+
+    // Mobile video autoplay handler
+    useEffect(() => {
+        const video = mobileVideoRef.current;
+        if (!video) return;
+
+        // Ensure autoplay on mobile browsers
+        const playVideo = async () => {
+            try {
+                if (video.paused) {
+                    await video.play();
+                }
+            } catch {
+                // Autoplay blocked, will retry on user interaction
+            }
+        };
+
+        playVideo();
+
+        // Retry on visibility change (when user returns to tab)
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                playVideo();
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        // Retry on touch start (mobile user interaction)
+        const handleTouchStart = () => {
+            playVideo();
+        };
+
+        document.addEventListener("touchstart", handleTouchStart, {
+            once: true,
+        });
+
+        return () => {
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+            );
+            document.removeEventListener("touchstart", handleTouchStart);
+        };
+    }, []);
 
     // Layout scroll lock
     useEffect(() => {
@@ -271,11 +317,13 @@ export function HomeInteractive() {
             <div className="mobile-video-section">
                 <div className="homevideo">
                     <video
+                        ref={mobileVideoRef}
                         src="/images/NEW-2.webm"
                         autoPlay
                         loop
                         muted
                         playsInline
+                        webkit-playsinline="true"
                         controlsList="nodownload"
                     />
                 </div>

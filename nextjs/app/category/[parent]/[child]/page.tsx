@@ -2,6 +2,13 @@ import ChildTopicView from "@/components/ChildTopicView";
 
 const OUTLOOK_API_URL = "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
+// Module-level cache for build-time data sharing across routes
+let cachedData: Array<{ parent: string; child: string }> | null = null;
+let pendingRequest: Promise<Array<{ parent: string; child: string }>> | null =
+    null;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+let cacheTimestamp = 0;
+
 type ApiCategory = {
     slug?: string;
     children?: ApiCategory[];
@@ -22,6 +29,79 @@ type CategoryDetailPageProps = {
     }>;
 };
 
+async function fetchCategoryPairsWithCache(): Promise<
+    Array<{ parent: string; child: string }>
+> {
+    const now = Date.now();
+
+    // Return cached data if valid
+    if (cachedData && now - cacheTimestamp < CACHE_TTL_MS) {
+        return cachedData;
+    }
+
+    // Return pending request if exists (deduplication)
+    if (pendingRequest) {
+        return pendingRequest;
+    }
+
+    // Create new request
+    pendingRequest = fetchCategoryPairs();
+
+    try {
+        const result = await pendingRequest;
+        cachedData = result;
+        cacheTimestamp = now;
+        return result;
+    } finally {
+        pendingRequest = null;
+    }
+}
+
+async function fetchCategoryPairs(): Promise<
+    Array<{ parent: string; child: string }>
+> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    try {
+        const response = await fetch(OUTLOOK_API_URL, {
+            cache: "force-cache",
+            signal: controller.signal,
+            next: { revalidate: 3600 }, // Revalidate every hour
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = (await response.json()) as ApiResponse;
+
+        // Optimized data processing using flatMap
+        const pairs = (payload.data ?? []).flatMap((item) =>
+            (item.categories ?? []).flatMap((category) => {
+                const parentSlug = category.slug;
+                if (!parentSlug) return [];
+                return (category.children ?? [])
+                    .filter((child): child is ApiCategory & { slug: string } =>
+                        Boolean(child.slug),
+                    )
+                    .map((child) => ({
+                        parent: parentSlug,
+                        child: child.slug,
+                    }));
+            }),
+        );
+
+        return pairs;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        console.error("Failed to fetch category pairs:", error);
+        return [];
+    }
+}
+
 export default async function CategoryDetailPage({
     params,
 }: CategoryDetailPageProps) {
@@ -30,23 +110,5 @@ export default async function CategoryDetailPage({
 }
 
 export async function generateStaticParams() {
-    try {
-        const response = await fetch(OUTLOOK_API_URL, { cache: "force-cache" });
-        if (!response.ok) return [];
-        const payload = (await response.json()) as ApiResponse;
-        const pairs: Array<{ parent: string; child: string }> = [];
-        (payload.data ?? []).forEach((item) => {
-            (item.categories ?? []).forEach((category) => {
-                const parentSlug = category.slug;
-                if (!parentSlug) return;
-                (category.children ?? []).forEach((child) => {
-                    if (!child.slug) return;
-                    pairs.push({ parent: parentSlug, child: child.slug });
-                });
-            });
-        });
-        return pairs;
-    } catch {
-        return [];
-    }
+    return fetchCategoryPairsWithCache();
 }
