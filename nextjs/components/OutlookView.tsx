@@ -8,8 +8,12 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5wc from "@amcharts/amcharts5/wc";
 
 const OUTLOOK_API_URL =
-    process.env.NEXT_PUBLIC_OUTLOOK_API_URL ||
-    "https://schedalign.rohans.uno/api/GetWebSiteContent";
+    typeof window === "undefined"
+        ? process.env.API_OUTLOOK_URL // server (SSR)
+        : process.env.NEXT_PUBLIC_OUTLOOK_API_URL; // browser
+
+const OUTLOOK_API_URL_RESOLVED =
+    OUTLOOK_API_URL || "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
 type ApiCategoryMeta = {
     categoryWeight?: number;
@@ -349,7 +353,7 @@ export default function OutlookView({
 
         const loadWordCloud = async () => {
             try {
-                const response = await fetch(OUTLOOK_API_URL, {
+                const response = await fetch(OUTLOOK_API_URL_RESOLVED, {
                     signal: controller.signal,
                 });
                 if (!response.ok) {
