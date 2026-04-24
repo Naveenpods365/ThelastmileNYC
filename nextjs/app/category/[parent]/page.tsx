@@ -2,7 +2,7 @@ import OutlookView from "@/components/OutlookView";
 import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL =
-    process.env.NEXT_PUBLIC_API_OUTLOOK_URL ||
+    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL ||
     "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
 const FALLBACK_SLUGS = [

@@ -2,14 +2,7 @@ import ChildTopicView from "@/components/ChildTopicView";
 import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL =
-    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL ||
-    "https://schedalign.rohans.uno/api/GetWebSiteContent";
-
-if (!OUTLOOK_API_URL) {
-    throw new Error(
-        "NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL is not defined"
-    );
-}
+    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL;
 
 // Module-level cache for build-time data sharing across routes
 let cachedData: Array<{ parent: string; child: string }> | null = null;
@@ -73,6 +66,11 @@ async function fetchCategoryPairs(): Promise<
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
     try {
+        if (!OUTLOOK_API_URL) {
+            throw new Error(
+                "NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL is not defined"
+            );
+        }
         const response = await fetch(OUTLOOK_API_URL, {
             cache: "force-cache",
             signal: controller.signal,
