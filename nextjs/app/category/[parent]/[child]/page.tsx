@@ -5,6 +5,12 @@ const OUTLOOK_API_URL =
     process.env.API_OUTLOOK_URL ||
     "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
+if (!OUTLOOK_API_URL) {
+    throw new Error(
+        "NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL is not defined"
+    );
+}
+
 // Module-level cache for build-time data sharing across routes
 let cachedData: Array<{ parent: string; child: string }> | null = null;
 let pendingRequest: Promise<Array<{ parent: string; child: string }>> | null =
