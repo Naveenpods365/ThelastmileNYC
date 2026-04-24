@@ -9,7 +9,7 @@ import * as am5wc from "@amcharts/amcharts5/wc";
 
 const OUTLOOK_API_URL =
     typeof window === "undefined"
-        ? process.env.API_OUTLOOK_URL // server (SSR)
+        ? process.env.NEXT_PUBLIC_API_OUTLOOK_URL // server (SSR)
         : process.env.NEXT_PUBLIC_OUTLOOK_API_URL; // browser
 
 const OUTLOOK_API_URL_RESOLVED =

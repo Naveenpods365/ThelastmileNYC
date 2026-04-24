@@ -2,7 +2,7 @@ import ChildTopicView from "@/components/ChildTopicView";
 import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL =
-    process.env.API_OUTLOOK_URL ||
+    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL ||
     "https://schedalign.rohans.uno/api/GetWebSiteContent";
 
 if (!OUTLOOK_API_URL) {
