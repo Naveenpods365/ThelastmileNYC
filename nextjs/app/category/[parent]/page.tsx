@@ -2,8 +2,7 @@ import OutlookView from "@/components/OutlookView";
 import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL =
-    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL ||
-    "https://schedalign.rohans.uno/api/GetWebSiteContent";
+    process.env.LOCAL_API_OUTLOOK_URL;
 
 const FALLBACK_SLUGS = [
     "process",
@@ -89,6 +88,10 @@ async function fetchParentSlugsWithCache(): Promise<Array<{ parent: string }>> {
 async function fetchParentSlugs(): Promise<Array<{ parent: string }>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    if (!OUTLOOK_API_URL) {
+        throw new Error("LOCAL_API_OUTLOOK_URL is not defined");
+    }
 
     try {
         const response = await fetch(OUTLOOK_API_URL, {

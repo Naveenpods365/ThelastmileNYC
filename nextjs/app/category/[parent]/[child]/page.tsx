@@ -2,7 +2,7 @@ import ChildTopicView from "@/components/ChildTopicView";
 import { notFound } from "next/navigation";
 
 const OUTLOOK_API_URL =
-    process.env.NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL;
+    process.env.LOCAL_API_OUTLOOK_URL;
 
 // Module-level cache for build-time data sharing across routes
 let cachedData: Array<{ parent: string; child: string }> | null = null;
@@ -67,9 +67,7 @@ async function fetchCategoryPairs(): Promise<
 
     try {
         if (!OUTLOOK_API_URL) {
-            throw new Error(
-                "NEXT_PUBLIC_LOCAL_API_OUTLOOK_URL is not defined"
-            );
+            throw new Error("LOCAL_API_OUTLOOK_URL is not defined");
         }
         const response = await fetch(OUTLOOK_API_URL, {
             cache: "force-cache",
