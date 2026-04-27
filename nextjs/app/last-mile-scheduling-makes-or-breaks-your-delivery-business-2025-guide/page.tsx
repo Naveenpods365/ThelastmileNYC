@@ -1140,7 +1140,7 @@ export default function BlogArticle() {
                                     rel="noopener noreferrer"
                                     className="wp-sidebar-btn"
                                 >
-                                    <span className="wp-podcast-icon">
+                                    <span className="wp-podcast-icon wp-podcast-icon--spotify">
                                         <svg
                                             viewBox="0 0 512 512"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -1166,7 +1166,7 @@ export default function BlogArticle() {
                                     rel="noopener noreferrer"
                                     className="wp-sidebar-btn"
                                 >
-                                    <span className="wp-podcast-icon">
+                                    <span className="wp-podcast-icon wp-podcast-icon--apple">
                                         <svg
                                             viewBox="0 0 448 512"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -1283,16 +1283,31 @@ const CSS = `
 .wp-sidebar-btn:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.5); text-decoration: none; }
 
 .wp-podcast-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+}
+.wp-podcast-icon--spotify {
+    background: #000;
+}
+.wp-podcast-icon--apple {
+    background-color: #8A2BE2 !important;
+    background: linear-gradient(145deg, #c86dd7 0%, #9b30d0 40%, #7027b8 100%) !important;
 }
 .wp-podcast-icon svg {
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
+}
+.wp-podcast-icon--apple svg {
+    width: 22px !important;
+    height: 22px !important;
+    color: #fff;
+    fill: #fff;
 }
 .wp-podcast-label {
     font-size: 13px;
