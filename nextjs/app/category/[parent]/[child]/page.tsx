@@ -1,8 +1,15 @@
 import ChildTopicView from "@/components/ChildTopicView";
 import { notFound } from "next/navigation";
 
-const OUTLOOK_API_URL =
-    process.env.LOCAL_API_OUTLOOK_URL;
+const OUTLOOK_API_URLS = Array.from(
+    new Set(
+        [
+            process.env.LOCAL_API_OUTLOOK_URL,
+            process.env.NEXT_PUBLIC_OUTLOOK_API_URL,
+            "https://schedalign.rohans.uno/api/GetWebSiteContent",
+        ].filter(Boolean) as string[],
+    ),
+);
 
 // Module-level cache for build-time data sharing across routes
 let cachedData: Array<{ parent: string; child: string }> | null = null;
@@ -66,22 +73,33 @@ async function fetchCategoryPairs(): Promise<
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
     try {
-        if (!OUTLOOK_API_URL) {
-            throw new Error("LOCAL_API_OUTLOOK_URL is not defined");
+        let payload: ApiResponse | null = null;
+        let lastError: unknown = null;
+
+        for (const url of OUTLOOK_API_URLS) {
+            try {
+                const response = await fetch(url, {
+                    cache: "force-cache",
+                    signal: controller.signal,
+                    next: { revalidate: 3600 }, // Revalidate every hour
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                payload = (await response.json()) as ApiResponse;
+                break;
+            } catch (error) {
+                lastError = error;
+            }
         }
-        const response = await fetch(OUTLOOK_API_URL, {
-            cache: "force-cache",
-            signal: controller.signal,
-            next: { revalidate: 3600 }, // Revalidate every hour
-        });
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!payload) {
+            throw lastError ?? new Error("Unable to fetch category pairs");
         }
-
-        const payload = (await response.json()) as ApiResponse;
 
         // Optimized data processing using flatMap
         const pairs = (payload.data ?? []).flatMap((item) =>

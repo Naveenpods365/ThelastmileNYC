@@ -1,8 +1,15 @@
 import OutlookView from "@/components/OutlookView";
 import { notFound } from "next/navigation";
 
-const OUTLOOK_API_URL =
-    process.env.LOCAL_API_OUTLOOK_URL;
+const OUTLOOK_API_URLS = Array.from(
+    new Set(
+        [
+            process.env.LOCAL_API_OUTLOOK_URL,
+            process.env.NEXT_PUBLIC_OUTLOOK_API_URL,
+            "https://schedalign.rohans.uno/api/GetWebSiteContent",
+        ].filter(Boolean) as string[],
+    ),
+);
 
 const FALLBACK_SLUGS = [
     "process",
@@ -89,24 +96,34 @@ async function fetchParentSlugs(): Promise<Array<{ parent: string }>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-    if (!OUTLOOK_API_URL) {
-        throw new Error("LOCAL_API_OUTLOOK_URL is not defined");
-    }
-
     try {
-        const response = await fetch(OUTLOOK_API_URL, {
-            cache: "force-cache",
-            signal: controller.signal,
-            next: { revalidate: 3600 },
-        });
+        let payload: ApiResponse | null = null;
+        let lastError: unknown = null;
+
+        for (const url of OUTLOOK_API_URLS) {
+            try {
+                const response = await fetch(url, {
+                    cache: "force-cache",
+                    signal: controller.signal,
+                    next: { revalidate: 3600 },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                payload = (await response.json()) as ApiResponse;
+                break;
+            } catch (error) {
+                lastError = error;
+            }
+        }
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!payload) {
+            throw lastError ?? new Error("Unable to fetch parent slugs");
         }
-
-        const payload = (await response.json()) as ApiResponse;
 
         // Optimized data processing using flatMap and Set
         const slugs = new Set<string>();

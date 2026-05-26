@@ -8,11 +8,13 @@ import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
     typeof window === "undefined"
-        ? process.env.API_CONTENT_LIST_URL // server (SSR)
+        ? (process.env.API_CONTENT_LIST_URL ??
+          process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) // server (SSR)
         : process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL; // browser
 
 const CONTENT_LIST_API_URL_RESOLVED =
-    CONTENT_LIST_API_URL ?? "";
+    CONTENT_LIST_API_URL ??
+    "https://schedalign.rohans.uno/api/GetWebSiteContentList";
 
 const OUTLOOK_VIDEO = {
     title: "Outlook",

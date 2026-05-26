@@ -1187,6 +1187,20 @@ p {
     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
 }
 
+.result-topic-stage {
+    justify-content: center;
+    padding-top: 70px;
+    padding-bottom: 40px;
+}
+
+.result-topic-card-wrap {
+    width: min(520px, 82vw);
+}
+
+.result-topic-page .child-topic-card__title {
+    font-size: 18px;
+}
+
 @media (max-width: 1200px) {
     .child-topic-card-wrap {
         width: min(520px, 86vw);
@@ -1257,6 +1271,11 @@ p {
         width: 22px;
         height: 22px;
         bottom: -12px;
+    }
+
+    .result-topic-stage {
+        padding-top: 160px;
+        justify-content: flex-start;
     }
 }
 
