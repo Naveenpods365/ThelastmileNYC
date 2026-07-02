@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
 import Header from "@/components/Header";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5wc from "@amcharts/amcharts5/wc";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 const OUTLOOK_API_URL =
-    typeof window === "undefined"
+    (typeof window === "undefined"
         ? process.env.NEXT_PUBLIC_API_OUTLOOK_URL // server (SSR)
-        : process.env.NEXT_PUBLIC_OUTLOOK_API_URL; // browser
-
-const OUTLOOK_API_URL_RESOLVED =
-    OUTLOOK_API_URL || "https://schedalign.rohans.uno/api/GetWebSiteContent";
+        : process.env.NEXT_PUBLIC_OUTLOOK_API_URL) ?? ""; // browser
 
 type ApiCategoryMeta = {
     categoryWeight?: number;
@@ -353,7 +350,7 @@ export default function OutlookView({
 
         const loadWordCloud = async () => {
             try {
-                const response = await fetch(OUTLOOK_API_URL_RESOLVED, {
+                const response = await fetch(OUTLOOK_API_URL, {
                     signal: controller.signal,
                 });
                 if (!response.ok) {

@@ -5,8 +5,7 @@ const OUTLOOK_API_URLS = Array.from(
     new Set(
         [
             process.env.LOCAL_API_OUTLOOK_URL,
-            process.env.NEXT_PUBLIC_OUTLOOK_API_URL,
-            "https://schedalign.rohans.uno/api/GetWebSiteContent",
+            process.env.NEXT_PUBLIC_OUTLOOK_API_URL
         ].filter(Boolean) as string[],
     ),
 );

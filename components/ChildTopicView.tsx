@@ -7,14 +7,10 @@ import Header from "@/components/Header";
 import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
-    typeof window === "undefined"
+    (typeof window === "undefined"
         ? (process.env.API_CONTENT_LIST_URL ??
           process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) // server (SSR)
-        : process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL; // browser
-
-const CONTENT_LIST_API_URL_RESOLVED =
-    CONTENT_LIST_API_URL ??
-    "https://schedalign.rohans.uno/api/GetWebSiteContentList";
+        : process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) ?? ""; // browser
 
 const OUTLOOK_VIDEO = {
     title: "Outlook",
@@ -168,7 +164,7 @@ export default function ChildTopicView({
         const load = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(CONTENT_LIST_API_URL_RESOLVED, {
+                const response = await fetch(CONTENT_LIST_API_URL, {
                     cache: "no-store",
                 });
                 if (!response.ok) {
