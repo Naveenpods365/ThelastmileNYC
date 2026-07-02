@@ -1,0 +1,22 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run deploy script on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 124.123.18.19
+          username: pods365
+          password: Amaira26
+          port: 50022
+          request_pty: true
+          script: |
+            cd /var/www/dotc/thelastmilenyc
+            chmod +x deploy.sh
+            ./deploy.sh

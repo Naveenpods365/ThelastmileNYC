@@ -1,9 +1,15 @@
 #!/bin/bash
 set -e
 
-APP_DIR="/var/www/html/ThelastmileNYC/nextjs/"
+APP_DIR="/var/www/dotc/thelastmilenyc"
 BRANCH="main"
 REPO_URL="https://github.com/Naveenpods365/ThelastmileNYC.git"
+
+echo "=============================="
+echo "🚀 Deployment Started"
+echo "=============================="
+
+cd "$APP_DIR"
 
 echo "📥 Fetching latest code..."
 git fetch $REPO_URL
@@ -20,12 +26,9 @@ npm install --legacy-peer-deps
 echo "📦 Building..."
 npm run build
 
-cd "$APP_DIR"
-
 echo "🔄 Restarting services..."
 
-pm2 restart nyc
-pm2 save
+sudo systemctl restart thelastmilenyc
 
 echo "=============================="
 echo "✅ Deployment Finished"
