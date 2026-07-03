@@ -1,11 +1,13 @@
 import ChildTopicView from "@/components/ChildTopicView";
 import { notFound } from "next/navigation";
+import { getResultPage } from "@/lib/results";
 
 const OUTLOOK_API_URLS = Array.from(
     new Set(
         [
             process.env.LOCAL_API_OUTLOOK_URL,
             process.env.NEXT_PUBLIC_OUTLOOK_API_URL,
+            "https://schedalignaz.rohans.uno/node/scheduler/api/GetWebSiteContent"
         ].filter(Boolean) as string[],
     ),
 );
@@ -19,11 +21,14 @@ let cacheTimestamp = 0;
 
 type ApiCategory = {
     slug?: string;
+    Slug?: string;
     children?: ApiCategory[];
+    Children?: ApiCategory[];
 };
 
 type ApiItem = {
     categories?: ApiCategory[];
+    Categories?: ApiCategory[];
 };
 
 type ApiResponse = {
@@ -101,20 +106,22 @@ async function fetchCategoryPairs(): Promise<
         }
 
         // Optimized data processing using flatMap
-        const pairs = (payload.data ?? []).flatMap((item) =>
-            (item.categories ?? []).flatMap((category) => {
-                const parentSlug = category.slug;
+        const pairs = (payload.data ?? []).flatMap((item) => {
+            const categories = item.categories ?? item.Categories ?? [];
+            return categories.flatMap((category) => {
+                const parentSlug = category.slug ?? category.Slug;
                 if (!parentSlug) return [];
-                return (category.children ?? [])
-                    .filter((child): child is ApiCategory & { slug: string } =>
-                        Boolean(child.slug),
+                const children = category.children ?? category.Children ?? [];
+                return children
+                    .filter((child): child is ApiCategory & { slug?: string; Slug?: string } =>
+                        Boolean(child.slug ?? child.Slug),
                     )
                     .map((child) => ({
                         parent: parentSlug,
-                        child: child.slug,
+                        child: (child.slug ?? child.Slug) as string,
                     }));
-            }),
-        );
+            });
+        });
 
         return pairs;
     } catch (error) {
@@ -135,7 +142,9 @@ export default async function CategoryDetailPage({
         notFound();
     }
 
-    return <ChildTopicView parentSlug={parent} childSlug={child} />;
+    const resultPage = await getResultPage(child);
+
+    return <ChildTopicView parentSlug={parent} childSlug={child} links={resultPage?.links} />;
 }
 
 export async function generateStaticParams() {

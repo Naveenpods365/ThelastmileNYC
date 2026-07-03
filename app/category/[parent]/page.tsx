@@ -5,7 +5,8 @@ const OUTLOOK_API_URLS = Array.from(
     new Set(
         [
             process.env.LOCAL_API_OUTLOOK_URL,
-            process.env.NEXT_PUBLIC_OUTLOOK_API_URL
+            process.env.NEXT_PUBLIC_OUTLOOK_API_URL,
+            "https://schedalignaz.rohans.uno/node/scheduler/api/GetWebSiteContent"
         ].filter(Boolean) as string[],
     ),
 );
@@ -48,11 +49,14 @@ let cacheTimestamp = 0;
 
 type ApiCategory = {
     slug?: string;
+    Slug?: string;
     children?: ApiCategory[];
+    Children?: ApiCategory[];
 };
 
 type ApiItem = {
     categories?: ApiCategory[];
+    Categories?: ApiCategory[];
 };
 
 type ApiResponse = {
@@ -127,8 +131,10 @@ async function fetchParentSlugs(): Promise<Array<{ parent: string }>> {
         // Optimized data processing using flatMap and Set
         const slugs = new Set<string>();
         (payload.data ?? []).forEach((item) => {
-            (item.categories ?? []).forEach((category) => {
-                if (category.slug) slugs.add(category.slug);
+            const categories = item.categories ?? item.Categories ?? [];
+            categories.forEach((category) => {
+                const slug = category.slug ?? category.Slug;
+                if (slug) slugs.add(slug);
             });
         });
 

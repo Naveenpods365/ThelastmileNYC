@@ -10,22 +10,29 @@ import { useEffect, useRef, useState } from "react";
 const OUTLOOK_API_URL =
     (typeof window === "undefined"
         ? process.env.NEXT_PUBLIC_API_OUTLOOK_URL // server (SSR)
-        : process.env.NEXT_PUBLIC_OUTLOOK_API_URL) ?? ""; // browser
+        : process.env.NEXT_PUBLIC_OUTLOOK_API_URL) || "https://schedalignaz.rohans.uno/node/scheduler/api/GetWebSiteContent"; // browser
 
 type ApiCategoryMeta = {
     categoryWeight?: number;
     categoryPercent?: number;
+    CategoryWeight?: number;
+    CategoryPercent?: number;
 };
 
 type ApiCategory = {
     name?: string;
+    Name?: string;
     slug?: string;
+    Slug?: string;
     meta?: ApiCategoryMeta;
+    Meta?: ApiCategoryMeta;
     children?: ApiCategory[];
+    Children?: ApiCategory[];
 };
 
 type ApiItem = {
     categories?: ApiCategory[];
+    Categories?: ApiCategory[];
 };
 
 type ApiResponse = {
@@ -199,33 +206,36 @@ const OUTLOOK_VIDEO = {
     src: "https://clientblob1.blob.core.windows.net/websitecontent/Outlook.mp4",
 };
 
-const getPercent = (meta?: ApiCategoryMeta) =>
-    typeof meta?.categoryPercent === "number" ? meta.categoryPercent : 0;
+const getPercent = (meta?: ApiCategoryMeta) => {
+    if (typeof meta?.categoryPercent === "number") return meta.categoryPercent;
+    if (typeof meta?.CategoryPercent === "number") return meta.CategoryPercent;
+    return 0;
+};
 
 const buildWordCloudData = (
     categories: ApiCategory[],
     parentSlug?: string,
 ): WordCloudDatum[] => {
     const safeCategories = categories.filter(
-        (category) => category?.slug && category?.name,
+        (category) => (category?.slug || category?.Slug) && (category?.name || category?.Name),
     );
     const maxPercent = safeCategories.reduce(
-        (max, category) => Math.max(max, getPercent(category.meta)),
+        (max, category) => Math.max(max, getPercent(category.meta ?? category.Meta)),
         0,
     );
     return safeCategories
         .map((category) => {
-            const percent = getPercent(category.meta);
+            const percent = getPercent(category.meta ?? category.Meta);
             const weight = maxPercent
                 ? Math.round((percent / maxPercent) * 100)
                 : 0;
             const size = Number((weight * percent).toFixed(2));
             return {
-                tag: category.name as string,
+                tag: (category.name ?? category.Name) as string,
                 weight,
                 percent,
                 size,
-                slug: category.slug as string,
+                slug: (category.slug ?? category.Slug) as string,
                 parentSlug,
             };
         })
@@ -366,40 +376,49 @@ export default function OutlookView({
                 const childMap = new Map<string, Map<string, ApiCategory>>();
 
                 items.forEach((item) => {
-                    (item.categories ?? []).forEach((category) => {
-                        const slug = category.slug;
+                    const categories = item.categories ?? item.Categories ?? [];
+                    categories.forEach((category) => {
+                        const slug = category.slug ?? category.Slug;
                         if (!slug) return;
 
                         const existing = categoryMap.get(slug);
                         if (!existing) {
                             categoryMap.set(slug, {
                                 ...category,
+                                slug,
+                                name: category.name ?? category.Name,
+                                meta: category.meta ?? category.Meta,
                                 children: [],
                             });
                         } else if (
-                            getPercent(category.meta) >
-                            getPercent(existing.meta)
+                            getPercent(category.meta ?? category.Meta) >
+                            getPercent(existing.meta ?? existing.Meta)
                         ) {
-                            existing.meta = category.meta;
+                            existing.meta = category.meta ?? category.Meta;
                         }
 
                         const childBucket =
                             childMap.get(slug) ??
                             new Map<string, ApiCategory>();
-                        (category.children ?? []).forEach((child) => {
-                            const childSlug = child.slug;
+                        
+                        const children = category.children ?? category.Children ?? [];
+                        children.forEach((child) => {
+                            const childSlug = child.slug ?? child.Slug;
                             if (!childSlug) return;
                             const existingChild = childBucket.get(childSlug);
                             if (!existingChild) {
                                 childBucket.set(childSlug, {
                                     ...child,
+                                    slug: childSlug,
+                                    name: child.name ?? child.Name,
+                                    meta: child.meta ?? child.Meta,
                                     children: [],
                                 });
                             } else if (
-                                getPercent(child.meta) >
-                                getPercent(existingChild.meta)
+                                getPercent(child.meta ?? child.Meta) >
+                                getPercent(existingChild.meta ?? existingChild.Meta)
                             ) {
-                                existingChild.meta = child.meta;
+                                existingChild.meta = child.meta ?? child.Meta;
                             }
                         });
                         childMap.set(slug, childBucket);

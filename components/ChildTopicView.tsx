@@ -8,9 +8,9 @@ import SocialIconCluster from "@/components/SocialIconCluster";
 
 const CONTENT_LIST_API_URL =
     (typeof window === "undefined"
-        ? (process.env.API_CONTENT_LIST_URL ??
-          process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) // server (SSR)
-        : process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) ?? ""; // browser
+        ? (process.env.API_CONTENT_LIST_URL ||
+          process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL)
+        : process.env.NEXT_PUBLIC_CONTENT_LIST_API_URL) || "https://schedalignaz.rohans.uno/node/scheduler/api/GetWebSiteContentList";
 
 const OUTLOOK_VIDEO = {
     title: "Outlook",
@@ -26,36 +26,94 @@ type ApiCategoryMeta = {
 type ApiCategory = {
     name?: string;
     slug?: string;
+    Slug?: string;
     meta?: ApiCategoryMeta;
     children?: ApiCategory[];
+    Children?: ApiCategory[];
 };
 
 type ApiItemMeta = {
     appleSharingLink?: string;
+    AppleSharingLink?: string;
     instagramSharingLink?: string;
+    InstagramSharingLink?: string;
     youtubeSharingLink?: string;
+    YoutubeSharingLink?: string;
     xSharingLink?: string;
+    XSharingLink?: string;
     mediumLink?: string;
+    MediumLink?: string;
     spotifySharingLink?: string;
+    SpotifySharingLink?: string;
+};
+
+type ApiItemLinks = {
+    Spotify?: string | null;
+    Apple?: string | null;
+    YouTube?: string | null;
+    X?: string | null;
+    LinkedIn?: string | null;
+    Instagram?: string | null;
+    Medium?: string | null;
+    Blog?: string | null;
+    spotify?: string | null;
+    apple?: string | null;
+    youtube?: string | null;
+    x?: string | null;
+    linkedIn?: string | null;
+    instagram?: string | null;
+    medium?: string | null;
+    blog?: string | null;
 };
 
 type ApiItem = {
     title?: string;
+    Title?: string;
     content?: string;
+    Content?: string;
     status?: string;
+    Status?: string;
     backgroundImage?: string;
+    BackgroundImage?: string;
     categories?: ApiCategory[];
+    Categories?: ApiCategory[];
     meta?: ApiItemMeta;
+    Meta?: ApiItemMeta;
+    links?: ApiItemLinks;
+    Links?: ApiItemLinks;
     publicationDate?: string;
+    PublicationDate?: string;
+    appleSharingLink?: string;
+    AppleSharingLink?: string;
+    instagramSharingLink?: string;
+    InstagramSharingLink?: string;
+    youtubeSharingLink?: string;
+    YoutubeSharingLink?: string;
+    xSharingLink?: string;
+    XSharingLink?: string;
+    mediumLink?: string;
+    MediumLink?: string;
+    spotifySharingLink?: string;
+    SpotifySharingLink?: string;
 };
 
 type ApiResponse = {
     data?: ApiItem[];
 };
 
+type SocialLinks = {
+    apple?: string;
+    blog?: string;
+    instagram?: string;
+    spotify?: string;
+    x?: string;
+    youtube?: string;
+};
+
 type ChildTopicViewProps = {
     parentSlug: string;
     childSlug: string;
+    links?: SocialLinks;
 };
 
 type MatchResult = {
@@ -152,6 +210,7 @@ function VideoPopup({ title, videoSrc, onClose }: PopupProps) {
 export default function ChildTopicView({
     parentSlug,
     childSlug,
+    links: externalLinks,
 }: ChildTopicViewProps) {
     const [items, setItems] = useState<ApiItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -193,10 +252,14 @@ export default function ChildTopicView({
 
     const match = useMemo<MatchResult>(() => {
         for (const item of items) {
-            for (const category of item.categories ?? []) {
-                if (category.slug !== parentSlug) continue;
-                for (const child of category.children ?? []) {
-                    if (child.slug !== childSlug) continue;
+            const categories = item.categories ?? item.Categories ?? [];
+            for (const category of categories) {
+                const catSlug = category.slug ?? category.Slug;
+                if (catSlug !== parentSlug) continue;
+                const children = category.children ?? category.Children ?? [];
+                for (const child of children) {
+                    const childSlugValue = child.slug ?? child.Slug;
+                    if (childSlugValue !== childSlug) continue;
                     return { item, parent: category, child };
                 }
             }
@@ -204,24 +267,26 @@ export default function ChildTopicView({
         return { item: null, parent: null, child: null };
     }, [items, parentSlug, childSlug]);
 
-    const parentLabel = match.parent?.name ?? formatSlug(parentSlug);
-    const childLabel = match.child?.name ?? formatSlug(childSlug);
-    const meta = match.item?.meta;
-    const cardImage = match.item?.backgroundImage;
-    const cardTitle = match.item?.title ?? "";
-    const cardContent = cleanText(match.item?.content);
-    const dateText = formatDateTime(match.item?.publicationDate);
+    const parentLabel = match.parent?.name ?? match.parent?.Name ?? formatSlug(parentSlug);
+    const childLabel = match.child?.name ?? match.child?.Name ?? formatSlug(childSlug);
+    const meta = match.item?.meta ?? match.item?.Meta;
+    const cardImage = match.item?.backgroundImage ?? match.item?.BackgroundImage;
+    const cardTitle = match.item?.title ?? match.item?.Title ?? "";
+    const cardContent = cleanText(match.item?.content ?? match.item?.Content);
+    const dateText = formatDateTime(match.item?.publicationDate ?? match.item?.PublicationDate);
+
+    const apiLinks = match.item?.Links ?? match.item?.links;
 
     const socialLinks = useMemo(
-        () => ({
-            apple: meta?.appleSharingLink,
-            blog: meta?.mediumLink,
-            instagram: meta?.instagramSharingLink,
-            spotify: meta?.spotifySharingLink,
-            x: meta?.xSharingLink,
-            youtube: meta?.youtubeSharingLink,
+        () => externalLinks ?? ({
+            apple: apiLinks?.Apple ?? apiLinks?.apple ?? meta?.appleSharingLink ?? meta?.AppleSharingLink ?? match.item?.appleSharingLink ?? match.item?.AppleSharingLink,
+            blog: apiLinks?.Blog ?? apiLinks?.blog ?? apiLinks?.Medium ?? apiLinks?.medium ?? meta?.mediumLink ?? meta?.MediumLink ?? match.item?.mediumLink ?? match.item?.MediumLink,
+            instagram: apiLinks?.Instagram ?? apiLinks?.instagram ?? meta?.instagramSharingLink ?? meta?.InstagramSharingLink ?? match.item?.instagramSharingLink ?? match.item?.InstagramSharingLink,
+            spotify: apiLinks?.Spotify ?? apiLinks?.spotify ?? meta?.spotifySharingLink ?? meta?.SpotifySharingLink ?? match.item?.spotifySharingLink ?? match.item?.SpotifySharingLink,
+            x: apiLinks?.X ?? apiLinks?.x ?? meta?.xSharingLink ?? meta?.XSharingLink ?? match.item?.xSharingLink ?? match.item?.XSharingLink,
+            youtube: apiLinks?.YouTube ?? apiLinks?.youtube ?? meta?.youtubeSharingLink ?? meta?.YoutubeSharingLink ?? match.item?.youtubeSharingLink ?? match.item?.YoutubeSharingLink,
         }),
-        [meta],
+        [meta, match.item, externalLinks, apiLinks],
     );
 
     return (
