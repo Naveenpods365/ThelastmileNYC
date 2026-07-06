@@ -25,9 +25,11 @@ type ApiCategoryMeta = {
 
 type ApiCategory = {
     name?: string;
+    Name?: string;
     slug?: string;
     Slug?: string;
     meta?: ApiCategoryMeta;
+    Meta?: ApiCategoryMeta;
     children?: ApiCategory[];
     Children?: ApiCategory[];
 };
