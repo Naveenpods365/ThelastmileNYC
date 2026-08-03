@@ -447,7 +447,7 @@ export function ExperienceInteractive() {
                                 aria-label={ABOUT_JIM.label}
                                 onFocus={() => showTooltip(ABOUT_JIM.id)}
                                 onBlur={scheduleHideTooltip}
-                                onClick={() => showTooltip(ABOUT_JIM.id)}
+                                onClick={() => openPopupFor(ABOUT_JIM.id)}
                                 style={{
                                     width: "100%",
                                     height: "100%",
@@ -568,7 +568,7 @@ export function ExperienceInteractive() {
                                             onMouseLeave={scheduleHideTooltip}
                                             onFocus={() => showTooltip(pin.id)}
                                             onBlur={scheduleHideTooltip}
-                                            onClick={() => showTooltip(pin.id)}
+                                            onClick={() => openPopupFor(pin.id)}
                                             style={{
                                                 position: "absolute",
                                                 left: pinLeft,
