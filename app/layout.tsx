@@ -39,6 +39,9 @@ export const metadata: Metadata = {
         apple: "/images/favicon.png",
     },
     manifest: "/manifest.json",
+    verification: {
+        google: "KrMQEvfgsQgicFQ8KJe1m23f5MZQR1gVG5y1CEY5gOo",
+    },
     other: {
         "msapplication-TileImage": "/images/favicon.png",
     },
